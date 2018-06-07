@@ -14,10 +14,11 @@
 %% API
 -export([start_link/0, init/1]).
 -export([handle_call/3, handle_cast/3]).
--export([get_leaderboard/0, register_client/1, delete_client/1, add_client_point/1]).
+-export([get_leaderboard/0, register_client/2, delete_client/1, add_client_point/1]).
 -export([create_leaderboard/0]).
 
 -record(leaderBoard, {board}).
+-record(player,{name, points}).
 
 start_link() ->
   gen_server:start_link({global, ?MODULE}, ?MODULE, [],[]).
@@ -32,8 +33,8 @@ init(Leaderboard) -> {ok,create_leaderboard()}.
 get_leaderboard() ->
   gen_server:call({global, boardServer}, {get_leaderboard}).
 
-register_client(PID) ->
-  gen_server:call({global, boardServer}, {register_client, PID}).
+register_client(PID, Name) ->
+  gen_server:call({global, boardServer}, {register_client, PID, Name}).
 
 delete_client(PID) ->
   gen_server:cast({global, boardServer}, {delete_client, PID}).
@@ -47,12 +48,14 @@ add_client_point(PID) ->
 
 handle_call({get_leaderboard}, _From, Leaderboard) -> {reply, Leaderboard, Leaderboard};
 
-handle_call({register_client, PID}, _From, Leaderboard) ->
+handle_call({register_client, PID, Name}, _From, Leaderboard) ->
   L1 = Leaderboard#leaderBoard.board,
   Players = maps:keys(L1),
-  AlreadyRegisterd = lists:any(fun (X) -> X== PID end, Players),
-  if AlreadyRegisterd /= true ->
-    L2  = maps:put(PID, 0, L1),
+  #player{name = Names} = maps:values(),
+  AlreadyRegisterdPID = lists:any(fun (X) -> X == PID end, Players),
+  AlreadyRegisterdName = lists:any(fun (X) -> X == Name end, Names),
+  if ((AlreadyRegisterdPID /= true) and (AlreadyRegisterdName /= true)) ->
+    L2  = maps:put(PID, #player{name = Name, points = 0}, L1),
     L3 = #leaderBoard{board = L2},
     {reply, ok, L3};
     true -> {reply, allreadyRegistered, Leaderboard}
@@ -60,9 +63,9 @@ handle_call({register_client, PID}, _From, Leaderboard) ->
 
 handle_call({add_client_point, PID}, _From, Leaderboard) ->
   Board = Leaderboard#leaderBoard.board,
-  {Status, Points} = maps:find(PID,Board),
+  {Status, #player{points = Points}} = maps:find(PID,Board),
   if Status == ok ->
-    NewB = Board#{PID => (Points+1)},
+    NewB = Board#{PID => #player{points = Points+1}},
   {reply, ok, #leaderBoard{board = NewB}};
     true ->   {reply, 'Client doesn not exist', Leaderboard}
   end.
@@ -84,6 +87,6 @@ handle_cast({delete_client, PID}, _From, Leaderboard) ->
 %% FUNCTIONS
 
 create_leaderboard() ->
-  Board = maps:new(),   % key: PID val: SCORE
+  Board = maps:new(),   % key: PID val: player
   Leaderboard = #leaderBoard{board = Board},
   Leaderboard.
