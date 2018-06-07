@@ -36,5 +36,6 @@ add_client_point_test() ->
   boardServer:add_client_point(2),
   boardServer:add_client_point(2),
   boardServer:add_client_point(3),
-  [?assertEqual(boardServer:get_leaderboard(),{leaderBoard,#{1 => 4,2 => 3}})].
+  [?assertEqual(boardServer:get_leaderboard(),{leaderBoard,#{1 => {player,"Kuba",4},
+    2 => {player,"Julian",3}}})].
 

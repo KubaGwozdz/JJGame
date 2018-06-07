@@ -51,7 +51,8 @@ handle_call({get_leaderboard}, _From, Leaderboard) -> {reply, Leaderboard, Leade
 handle_call({register_client, PID, Name}, _From, Leaderboard) ->
   L1 = Leaderboard#leaderBoard.board,
   Players = maps:keys(L1),
-  #player{name = Names} = maps:values(),
+  N = maps:values(L1),
+  Names = lists:map(fun(#player{name=X}) -> X end, N),
   AlreadyRegisterdPID = lists:any(fun (X) -> X == PID end, Players),
   AlreadyRegisterdName = lists:any(fun (X) -> X == Name end, Names),
   if ((AlreadyRegisterdPID /= true) and (AlreadyRegisterdName /= true)) ->
@@ -63,9 +64,10 @@ handle_call({register_client, PID, Name}, _From, Leaderboard) ->
 
 handle_call({add_client_point, PID}, _From, Leaderboard) ->
   Board = Leaderboard#leaderBoard.board,
-  {Status, #player{points = Points}} = maps:find(PID,Board),
-  if Status == ok ->
-    NewB = Board#{PID => #player{points = Points+1}},
+  Status = maps:find(PID,Board),
+  if Status /= error ->
+    {_,#player{points = Points, name = Name}} = maps:find(PID,Board),
+    NewB = maps:update(PID, #player{points = Points+1, name = Name},Board),
   {reply, ok, #leaderBoard{board = NewB}};
     true ->   {reply, 'Client doesn not exist', Leaderboard}
   end.
