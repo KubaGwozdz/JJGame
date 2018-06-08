@@ -75,12 +75,6 @@ handle_cast({delete_client, PID}, _From, Leaderboard) ->
 
 
 
-
-
-
-
-
-
 %% FUNCTIONS
 
 create_leaderboard() ->
