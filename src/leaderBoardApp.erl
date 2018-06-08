@@ -37,7 +37,7 @@ start ()->
     wxFont:destroy(Font2),
     Pen = wxPen:new(),
     wxPen:setWidth(Pen,5),
-    wxPen:setColour(Pen,102,182,255),
+    wxPen:setColour(Pen,102,192,255),
     wxDC:setPen(Paint,Pen),
     wxDC:drawLine(Paint,{0, 190}, {200,190}),
     wxDC:drawCircle(Paint,{200,190},5),
