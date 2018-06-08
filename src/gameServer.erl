@@ -10,23 +10,40 @@
 -author("kuba").
 
 %% API
--export([start/0, server_loop/1]).
+-export([start/1, server_loop/3,send_rebus/2, register_players/1]).
+-record(player, {pid, name}).
 
--record(player,{pid, name}).
 
-start() ->
-  BoardServerPID = spawn(boardServer:start_link()),
-  Players = [],
-  server_loop(Players).
+start(Turns) ->
+  BoardServerPID = spawn(fun() -> boardServer:start_link() end),
+  Players = register_players([]),
+  Players.
 
-server_loop(Players) ->
+
+
+register_players(Players) ->
   receive
-    {register_client, PID, Name} ->
-      Status = boardServer:register_client(PID),
-      if Status == ok ->
-        P1 =lists:append([#player{pid = PID, name = Name}],Players),
-        server_loop(P1);
-      true -> server_loop(Players)
-      end
+    play -> Players;
+    {register, PID, Name} ->
+      lists:append([#player{pid = PID, name = Name}], Players),
+      boardServer:register_client(PID, Name),
+      register_players(Players)
+  end.
+
+
+
+
+server_loop(Players, Rebus, Score) -> 3.
+
+
+
+collect_choices(Time)-> 3.
+
+send_rebus(Remaining, Rebus) ->
+  if length(Remaining) /= 0->
+    [PID | Rest] = Remaining,
+    PID ! {give_answer, Rebus, self()},
+    send_rebus(Rest, Remaining);
+    true -> ok
   end.
 
