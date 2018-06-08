@@ -10,20 +10,31 @@
 -author("kuba").
 
 %% API
--export([start/0, server_loop/2, send_rebus/2]).
+-export([start/1, server_loop/3,send_rebus/2, register_players/1]).
+-record(player, {pid, name}).
 
 
-start() ->
-  BoardServerPID = spawn(boardServer:start_link()),
-  CollectChoicesPID = spawn(?MODULE:collect_choices()),
+start(Turns) ->
+  BoardServerPID = spawn(fun() -> boardServer:start_link() end),
+  Players = register_players([]),
+  Players.
+
+
+
+register_players(Players) ->
   receive
-    {lets_play} ->
-      N = boardServer:get_clients_pid(),
-      server_loop(N,1)
+    play -> Players;
+    {register, PID, Name} ->
+      lists:append([#player{pid = PID, name = Name}], Players),
+      boardServer:register_client(PID, Name),
+      register_players(Players)
   end.
 
-server_loop(Players, Rebus, Score) ->
-  send_rebus(Players, Rebus).
+
+
+
+server_loop(Players, Rebus, Score) -> 3.
+
 
 
 collect_choices(Time)-> 3.
