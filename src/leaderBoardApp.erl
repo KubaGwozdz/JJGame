@@ -33,9 +33,12 @@ start ()->
   Font2 = wxFont:new(20,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
   wxStaticText:setFont(lists:nth(3,Texts),Font2),
   Logo = wxImage:new("/Users/Julianek/AGH/4semestr/ERL/projekt/JJGame/logo.jpg"),
+  Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)*1.5), round(wxImage:getHeight(Logo)*1.5),
+    [{quality, ?wxIMAGE_QUALITY_HIGH}])),
+  StaticBitmap = wxStaticBitmap:new(Panel,1,Bitmap),
 
   [wxSizer:add(Sizer,Text,[{flag,?wxEXPAND bor ?wxALIGN_CENTER},{proportion,1},{border,10}]) || Text <- Texts],
-  wxSizer:add(Sizer,Logo,[{flag,?wxEXPAND bor ?wxALL},{proportion,1},{border,10}]),
+  wxSizer:add(Sizer,StaticBitmap,[{flag,?wxEXPAND bor ?wxALL},{proportion,1}]),
   wxSizer:add(Sizer,Button1,[{flag,?wxEXPAND bor ?wxALL},{proportion,1},{flag,?wxALIGN_CENTER},{border,10}]),
   wxSizer:add(Sizer,Button2,[{flag,?wxEXPAND bor ?wxALL},{proportion,1},{flag,?wxALIGN_CENTER},{border,10}]),
   wxSizer:add(Sizer,Button3,[{flag,?wxEXPAND bor ?wxALL},{proportion,1},{flag,?wxALIGN_CENTER},{border,10}]),
