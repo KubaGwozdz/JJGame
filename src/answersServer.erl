@@ -72,7 +72,7 @@ handle_call({add_point,Rebus, Answer}, _From, Answers) ->
       #answer{answer = Answer, pid=PID, points = Points} = lists:nth(1,A),
       NewAnswer = #answer{answer = Answer, pid = PID, points = Points+1},
       UpdatedRebusAnswers = lists:append([NewAnswer], lists:delete(#answer{answer = Answer, points = Points, pid = PID})),
-      UpdatedAnswers = maps:update(Rebus,UpdatedAnswers, Answers),
+      UpdatedAnswers = maps:update(Rebus,UpdatedRebusAnswers, Answers),
       {reply, ok, UpdatedAnswers};
       true -> {reply, rebusDoesNotExist, Answers}
     end;
