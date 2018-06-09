@@ -10,30 +10,56 @@
 -author("kuba").
 
 %% API
--export([start/1, server_loop/3,send_rebus/2, register_players/1]).
+-export([start/1, play/0, register_players/1]).
 -record(player, {pid, name}).
 
 
 start(Turns) ->
   BoardServerPID = spawn(fun() -> boardServer:start_link() end),
-  Players = register_players([]),
-  Players.
+  register_players([]).
 
-
+play() -> self() ! play.
 
 register_players(Players) ->
   receive
-    play -> Players;
+    play -> ok;
     {register, PID, Name} ->
-      lists:append([#player{pid = PID, name = Name}], Players),
+      %lists:append([#player{pid = PID, name = Name}], Players),
       boardServer:register_client(PID, Name),
       register_players(Players)
   end.
 
 
+broadcast_puzzle(Rebus, Players) ->
+  if length(Players) == 0 -> ok;
+    true ->
+      [PID | Rest] = Players,
+      PID ! Rebus,
+      broadcast_puzzle(Rebus, Rest)
+  end.
 
 
-server_loop(Players, Rebus, Score) -> 3.
+
+collect_answers(Answers) ->   % Answers: key = Answer , Val = Pid
+  receive
+    stop -> Answers;
+    {answer, Answer, Pid} ->
+      maps:put(Answer,Pid, Answers),
+      collect_answers(Answers)
+  end.
+
+
+game_loop() ->  .
+
+
+
+
+
+
+
+
+
+
 
 
 
