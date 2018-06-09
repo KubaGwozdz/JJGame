@@ -14,7 +14,8 @@
 %% API
 -export([start_link/0, init/1]).
 -export([handle_call/3, handle_cast/3]).
--export([get_leaderboard/0, get_number_of_players/0, get_clients_pid/0, register_client/2, delete_client/1, add_client_point/1]).
+-export([get_leaderboard/0, get_number_of_players/0, get_clients/0, get_clients_pids/0,
+  register_client/2, delete_client/1, add_client_point/1]).
 -export([create_leaderboard/0]).
 
 -record(leaderBoard, {board}).
@@ -36,8 +37,11 @@ get_leaderboard() ->
 get_number_of_players() ->
   gen_server:call({global, boardServer}, {get_number_of_players}).
 
-get_clients_pid() ->
-  gen_server:call({global, boardServer}, {get_clients_pid}).
+get_clients() ->
+  gen_server:call({global, boardServer}, {get_clients}).
+
+get_clients_pids() ->
+  gen_server:call({global, boardServer}, {get_clients_pids}).
 
 register_client(PID, Name) ->
   gen_server:call({global, boardServer}, {register_client, PID, Name}).
@@ -60,7 +64,12 @@ handle_call({get_number_of_players}, _From, Leaderboard) ->
   Players = maps:keys(L1),
   {reply, length(Players), Leaderboard};
 
-handle_call({get_clients_pid}, _From, Leaderboard) ->
+handle_call({get_clients}, _From, Leaderboard) ->
+  L1 = Leaderboard#leaderBoard.board,
+  Players = maps:to_list(L1),
+  {reply, Players, Leaderboard};
+
+handle_call({get_clients_pids}, _From, Leaderboard) ->
   L1 = Leaderboard#leaderBoard.board,
   PlayerPids = maps:keys(L1),
   {reply, PlayerPids, Leaderboard};
