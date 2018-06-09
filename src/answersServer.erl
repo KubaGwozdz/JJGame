@@ -13,9 +13,9 @@
 -record(answer, {answer, pid, points}).
 
 %% API
--export([start_link/0, init/1].
+-export([start_link/0, init/1]).
 -export([handle_call/3]).
--export([get_answers/0,add_rebus/1, add_answer/3, get_rebus_answers/1]).
+-export([get_answers/0,add_rebus/1, add_answer/3, get_rebus_answers/1, add_point/2]).
 
 
 start_link() ->
@@ -41,10 +41,11 @@ handle_call({get_answers}, _From, Answers) -> {reply, Answers, Answers};
 
 handle_call({add_rebus, Rebus}, _From, Answers) ->
   R = maps:keys(Answers),
-  Exists = lists:any(fun(X) -> X==Rebus end, R),
+  Exists = lists:any(fun(X) -> X == Rebus end, R),
   if Exists /= true ->
-    maps:put(Rebus, [], Answers),
-    {reply, ok, Answers}
+    A1 = maps:put(Rebus, [], Answers),
+    {reply, ok, A1};
+    true -> {reply, rebusDoesNotExist, Answers}
   end;
 
 handle_call({add_answer,Rebus, Answer, PID}, _From, Answers) ->
@@ -66,15 +67,16 @@ handle_call({add_point,Rebus, Answer}, _From, Answers) ->
   R = maps:keys(Answers),
   Exists = lists:any(fun(X) -> X==Rebus end, R),
   if Exists == true ->
-    RebusAnwers = maps:get(Rebus, Answers),
-    A = lists:filter(fun(A) -> A==Answer end, RebusAnwers),
-    if length(A) == 1 ->
-      #answer{answer = Answer, pid=PID, points = Points} = lists:nth(1,A),
+    RebusAnswers = maps:get(Rebus, Answers),
+    %An = lists:map(fun(#answer{answer = X}) -> X end, RebusAnswers),
+    An1 = lists:filter(fun(#answer{answer = A}) -> A == Answer end, RebusAnswers),
+    if length(An1) == 1 ->
+      #answer{answer = Answer, pid=PID, points = Points} = lists:nth(1,An1),
       NewAnswer = #answer{answer = Answer, pid = PID, points = Points+1},
-      UpdatedRebusAnswers = lists:append([NewAnswer], lists:delete(#answer{answer = Answer, points = Points, pid = PID})),
+      UpdatedRebusAnswers = lists:append([NewAnswer], lists:delete(#answer{answer = Answer, points = Points, pid = PID},RebusAnswers)),
       UpdatedAnswers = maps:update(Rebus,UpdatedRebusAnswers, Answers),
       {reply, ok, UpdatedAnswers};
-      true -> {reply, rebusDoesNotExist, Answers}
+      true -> {reply, {wrongAnswer,An1, RebusAnswers}, Answers}
     end;
     true -> {reply, rebusDoesNotExist, Answers}
   end.
