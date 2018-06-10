@@ -23,9 +23,9 @@ start ()->
 
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
-  Button1 = wxButton:new(Panel,1,[{label,"PLAY 1 TURN"},{size,{100,20}}]),
-  Button2 = wxButton:new(Panel,2,[{label,"PLAY 5 TURNS"},{size,{100,20}}]),
-  Button3 = wxButton:new(Panel,3,[{label,"PLAY 10 TURNS"},{size,{100,20}}]),
+  Button1 = wxButton:new(Panel,1,[{label,"PLAY 1 TURN"},{size,{450,30}}]),
+  Button2 = wxButton:new(Panel,2,[{label,"PLAY 5 TURNS"},{size,{450,30}}]),
+  Button3 = wxButton:new(Panel,3,[{label,"PLAY 10 TURNS"},{size,{450,30}}]),
   Texts = [wxStaticText:new(Panel,0,"",[]),wxStaticText:new(Panel,11,"Welcome to Rebus Game",[{style,?wxALIGN_CENTER},{size,{50,50}}]),
     wxStaticText:new(Panel,12,"Choose numer of turns to play",[{style,?wxALIGN_CENTER},{size,{50,50}}])],
   Font = wxFont:new(30,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
@@ -35,13 +35,13 @@ start ()->
   Logo = wxImage:new("logo.jpg"),
   Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)*1.5), round(wxImage:getHeight(Logo)*1.5),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
-  StaticBitmap = wxStaticBitmap:new(Panel,1,Bitmap),
+  StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
 
   [wxSizer:add(Sizer,Text,[{flag,?wxEXPAND bor ?wxALIGN_CENTER},{proportion,1},{border,10}]) || Text <- Texts],
-  wxSizer:add(Sizer,StaticBitmap,[{flag,?wxEXPAND bor ?wxALL},{proportion,1}]),
-  wxSizer:add(Sizer,Button1,[{flag,?wxEXPAND bor ?wxALL},{proportion,1},{flag,?wxALIGN_CENTER},{border,30}]),
-  wxSizer:add(Sizer,Button2,[{flag,?wxEXPAND bor ?wxALL},{proportion,1},{flag,?wxALIGN_CENTER},{border,30}]),
-  wxSizer:add(Sizer,Button3,[{flag,?wxEXPAND bor ?wxALL},{proportion,1},{flag,?wxALIGN_CENTER},{border,30}]),
+  wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,1}]),
+  wxSizer:add(Sizer,Button1,[{flag,?wxALIGN_CENTER},{proportion,1},{border,20}]),
+  wxSizer:add(Sizer,Button2,[{flag,?wxALIGN_CENTER},{proportion,1},{border,20}]),
+  wxSizer:add(Sizer,Button3,[{flag,?wxALIGN_CENTER},{proportion,1},{border,20}]),
 
   wxPanel:setSizer(Panel,Sizer),
   wxSizer:fit(Sizer,Panel),
