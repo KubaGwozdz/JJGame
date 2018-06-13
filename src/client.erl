@@ -10,10 +10,10 @@
 -author("kuba").
 
 %% API
--export([get_leaderboard/0]).
+-export([get_leaderboard/0, register/2]).
 
-register() ->
-  boardServer:register_client(self()).
+register(PID, Name) ->
+      boardServer:register_client(PID, Name).
 
 get_leaderboard() ->
   boardServer:get_leaderboard().

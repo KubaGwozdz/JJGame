@@ -10,25 +10,18 @@
 -author("kuba").
 
 %% API
--export([start/0, play/0, register_players/1]).
+-export([start/0,  register_players/0]).
 %-record(player, {pid, name}).
 
 
 start() ->
   BoardServerPID = spawn(fun() -> boardServer:start_link() end),
   AnswersServerPID = spawn(fun() -> answersServer:start_link() end),
-  register_players([]).
+  register(regProc, spawn(fun() -> game:register_players() end)),
+  ok.
 
-play() -> self() ! play.
 
-register_players(Players) ->
-  receive
-    play -> ok;
-    {register, PID, Name} ->
-      %lists:append([#player{pid = PID, name = Name}], Players),
-      boardServer:register_client(PID, Name),
-      register_players(Players)
-  end.
+
 
 
 
