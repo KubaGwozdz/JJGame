@@ -39,8 +39,7 @@ show_start_frame(Parent) ->
   wxFrame:connect(Panel, close_window),
   wxFrame:center(Frame),
   wxFrame:fit(Frame),
-  wxFrame:show(Frame),
-  Frame.
+  wxFrame:show(Frame).
 
 registerYourself(Frame) -> % when got Name do sth from clientApp
   ok.

@@ -18,8 +18,8 @@ start() ->
 
 init({Parent,State}) ->
   case State of
-    turnsPlay -> serverFrames:initFrame(Parent), clientApp:start();
-    registration -> serverFrames:registeredPlayers(Parent), clientFrames:registerYourself();
+    turnsPlay -> serverFrames:initFrame(Parent);
+    registration -> serverFrames:registeredPlayers(Parent);
     gameStart -> ok
   end.
 

@@ -10,16 +10,12 @@
 -author("Julianek").
 -include_lib("wx/include/wx.hrl").
 
-
 %% API
--export([start/0,init/1]).
+-export([start/0]).
 
 start() ->
   Parent = wx:new(),
-  init({Parent,startingGame}).
-
-init({Parent,State}) ->
-  case State of
-    startingGame -> Frame = clientFrames:show_start_frame(Parent), Parent = Frame;
+  receive
+    startingGame -> Parent = clientFrames:show_start_frame(Parent);
     register -> clientFrames:registerYourself(Parent)
   end.
