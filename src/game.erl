@@ -10,16 +10,27 @@
 -author("kuba").
 
 %% API
--export([start/0,  register_players/0]).
+-export([start/0,  register_players/0, register/1]).
 %-record(player, {pid, name}).
 
 
 start() ->
   BoardServerPID = spawn(fun() -> boardServer:start_link() end),
   AnswersServerPID = spawn(fun() -> answersServer:start_link() end),
-  register(regProc, spawn(fun() -> game:register_players() end)),
+  register_players(),
   ok.
 
+register_players() ->
+  Players = boardServer:get_clients_pids(),
+  register(Players).
+
+register(Players) ->    % broadcasts clients registration mode
+  if length(Players) == 0 -> ok;
+    true ->
+      [Player | Others ] = Players,
+      Player ! register,
+      register(Others)
+  end.
 
 
 
