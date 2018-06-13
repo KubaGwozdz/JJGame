@@ -14,11 +14,11 @@
 %% API
 -export([start_link/0, init/1]).
 -export([handle_call/3, handle_cast/3]).
--export([get_leaderboard/0, get_number_of_players/0, get_clients/0, get_clients_pids/0,
+-export([get_leaderboard/0, get_number_of_players/0, get_clients/0, get_clients_points/1, get_clients_pids/0,
   add_client/1, register_client/2, delete_client/1, add_client_point/1]).
 -export([create_leaderboard/0]).
 
--record(leaderBoard, {board}).
+-record(leaderBoard, {board}). % key: PID val: player
 -record(player,{name, points}).
 
 start_link() ->
@@ -55,6 +55,8 @@ delete_client(PID) ->
 add_client_point(PID) ->
   gen_server:call({global, boardServer}, {add_client_point, PID}).
 
+get_clients_points(PID) ->
+  gen_server:call({global, boardServer}, {get_clients_points, PID}).
 
 
 
@@ -76,6 +78,16 @@ handle_call({get_clients_pids}, _From, Leaderboard) ->
   L1 = Leaderboard#leaderBoard.board,
   PlayerPids = maps:keys(L1),
   {reply, PlayerPids, Leaderboard};
+
+handle_call({get_clients_points, PID}, _From, Leaderboard) ->
+  L1 = Leaderboard#leaderBoard.board,
+  PlayerPids = maps:keys(L1),
+  RegisterdPID = lists:any(fun (X) -> X == PID end, PlayerPids),
+  if RegisterdPID == true ->
+    #player{points = Points, name = Name} = maps:get(PID, L1),
+    {reply, Points, Leaderboard};
+    true -> {reply, playerDoesNotExist, Leaderboard}
+  end;
 
 handle_call({register_client, PID, Name}, _From, Leaderboard) ->
   L1 = Leaderboard#leaderBoard.board,
