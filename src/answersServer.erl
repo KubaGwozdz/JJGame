@@ -70,9 +70,10 @@ handle_call({add_point,Rebus, Answer}, _From, Answers) ->
     RebusAnswers = maps:get(Rebus, Answers),
     %An = lists:map(fun(#answer{answer = X}) -> X end, RebusAnswers),
     An1 = lists:filter(fun(#answer{answer = A}) -> A == Answer end, RebusAnswers),
-    if length(An1) == 1 ->
+    if length(An1) /= 0 ->
       #answer{answer = Answer, pid=PID, points = Points} = lists:nth(1,An1),
       NewAnswer = #answer{answer = Answer, pid = PID, points = Points+1},
+      boardServer:add_client_point(PID),                                        %%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       UpdatedRebusAnswers = lists:append([NewAnswer], lists:delete(#answer{answer = Answer, points = Points, pid = PID},RebusAnswers)),
       UpdatedAnswers = maps:update(Rebus,UpdatedRebusAnswers, Answers),
       {reply, ok, UpdatedAnswers};

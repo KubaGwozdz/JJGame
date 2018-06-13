@@ -17,11 +17,9 @@ start() ->
   Parent = wx:new(),
   Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
   clientFrames:show_start_frame(Frame),
+  boardServer:add_client(self()),   %ważne dziobo
   receive
     register -> clientFrames:registerYourself(Frame)
   end,
-  clientFrames:show_waiting_for_the_game(Frame),
-  receive
-    start -> gameLoop()
-  end.
+  clientFrames:show_waiting_for_the_game(Frame).
 

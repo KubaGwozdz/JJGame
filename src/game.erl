@@ -41,7 +41,7 @@ broadcast_puzzle(Rebus, Players) ->
   if length(Players) == 0 -> ok;
     true ->
       [PID | Rest] = Players,
-      PID ! {give_answer, Rebus, self()},
+      PID ! {give_answer, Rebus},
       broadcast_puzzle(Rebus, Rest)
   end.
 
@@ -50,6 +50,8 @@ collect_answers(Rebus) ->
   answersServer:add_rebus(Rebus),
   broadcast_puzzle(Rebus, boardServer:get_clients_pids()),
   collect(Rebus).
+
+
 
 collect(Rebus) ->   % Answers: key = Answer , Val = Pid
   receive

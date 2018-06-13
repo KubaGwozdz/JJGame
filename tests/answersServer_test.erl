@@ -29,7 +29,6 @@ get_answers_test() ->
     {answer,"Julianek",12,0}],
     2 => [],3 => []})].
 
-
 add_point_test() ->
   answersServer:add_point(1,"Bubus"),
   answersServer:add_point(1,"Bubus"),
@@ -38,3 +37,6 @@ add_point_test() ->
   [?assertEqual(answersServer:get_answers(),#{1 =>
   [{answer,"Julianek",12,1},{answer,"Bubus",13,3}],
     2 => [],3 => []})].
+
+get_rebus_answers_test() ->
+  [?assertEqual(answersServer:get_rebus_answers(1),[{answer,"Julianek",12,1},{answer,"Bubus",13,3}])].
