@@ -24,24 +24,21 @@ initFrame(Parent)->
   wxButton:connect(Button1,command_button_clicked,[{callback,
     fun(Evt, Obj) ->
       wxPanel:destroy(Panel),
-      serverApp:getNumOfTurns(1),
-      serverApp:init({Frame,registration})
+      serverApp:gameLoop(Frame,1)
     end
   }]),
   Button2 = wxButton:new(Panel,2,[{label,"PLAY 5 TURNS"},{size,{450,30}}]),
   wxButton:connect(Button2,command_button_clicked,[{callback,
     fun(Evt, Obj) ->
       wxPanel:destroy(Panel),
-      serverApp:getNumOfTurns(5),
-      serverApp:init({Frame,registration})
+      serverApp:gameLoop(Frame,5)
     end
   }]),
   Button3 = wxButton:new(Panel,3,[{label,"PLAY 10 TURNS"},{size,{450,30}}]),
   wxButton:connect(Button3,command_button_clicked,[{callback,
     fun(Evt, Obj) ->
       wxPanel:destroy(Panel),
-      serverApp:getNumOfTurns(10),
-      serverApp:init({Frame,registration})
+      serverApp:gameLoop(Frame,10)
     end
   }]),
   Texts = [wxStaticText:new(Panel,0,"",[]),wxStaticText:new(Panel,11,"Welcome to Rebus Game",[{style,?wxALIGN_CENTER},{size,{50,50}}]),
@@ -78,7 +75,6 @@ registeredPlayers(Frame) ->
   wxButton:connect(Button1,command_button_clicked,[{callback,
     fun(Evt, Obj) ->
       wxPanel:destroy(Panel),
-      serverApp:getNumOfTurns(1),
-      serverApp:init({Frame,start})
+      serverApp:init({Frame,gameStart})
     end
   }]),

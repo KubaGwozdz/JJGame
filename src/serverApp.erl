@@ -10,7 +10,7 @@
 -author("kuba").
 -include_lib("wx/include/wx.hrl").
 %% API
--export([init/1,start/0,getNumOfTurns/1]).
+-export([init/1,start/0,gameLoop/2]).
 
 start() ->
   Parent = wx:new(),
@@ -20,12 +20,9 @@ init({Parent,State}) ->
   case State of
     turnsPlay -> serverFrames:initFrame(Parent);
     registration -> serverFrames:registeredPlayers(Parent);
-    gameStart -> ok
   end.
 
-
-
-getNumOfTurns(Turns) ->
+gameLoop(Frame,Turns) ->
   Turns.
   %%game:start(),
 

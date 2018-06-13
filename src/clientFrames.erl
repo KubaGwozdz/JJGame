@@ -11,7 +11,7 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([registerYourself/1,show_start_frame/1]).
+-export([registerYourself/1,show_start_frame/1,show_waiting_for_the_game/1]).
 
 show_start_frame(Frame) ->
   Panel = wxPanel:new(Frame),
@@ -41,4 +41,7 @@ show_start_frame(Frame) ->
   wxFrame:show(Frame).
 
 registerYourself(Frame) -> % when got Name do sth from clientApp
+  ok.
+
+show_waiting_for_the_game(Frame) ->
   ok.
