@@ -18,11 +18,11 @@ start() ->
 
 init({Parent,State}) ->
   case State of
-    turnsPlay -> serverFrames:initFrame(Parent);
-    registration -> serverFrames:registeredPlayers(Parent);
+    gameStart -> serverFrames:initFrame(Parent)
   end.
 
 gameLoop(Frame,Turns) ->
+
   Turns.
   %%game:start(),
 

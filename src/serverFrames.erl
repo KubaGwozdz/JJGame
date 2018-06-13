@@ -11,7 +11,7 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([initFrame/1,registeredPlayers/1]).
+-export([initFrame/1,registeredPlayers/2]).
 
 initFrame(Parent)->
   Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
@@ -24,21 +24,21 @@ initFrame(Parent)->
   wxButton:connect(Button1,command_button_clicked,[{callback,
     fun(Evt, Obj) ->
       wxPanel:destroy(Panel),
-      serverApp:gameLoop(Frame,1)
+      registeredPlayers(Frame,1)
     end
   }]),
   Button2 = wxButton:new(Panel,2,[{label,"PLAY 5 TURNS"},{size,{450,30}}]),
   wxButton:connect(Button2,command_button_clicked,[{callback,
     fun(Evt, Obj) ->
       wxPanel:destroy(Panel),
-      serverApp:gameLoop(Frame,5)
+      registeredPlayers(Frame,5)
     end
   }]),
   Button3 = wxButton:new(Panel,3,[{label,"PLAY 10 TURNS"},{size,{450,30}}]),
   wxButton:connect(Button3,command_button_clicked,[{callback,
     fun(Evt, Obj) ->
       wxPanel:destroy(Panel),
-      serverApp:gameLoop(Frame,10)
+      registeredPlayers(Frame,10)
     end
   }]),
   Texts = [wxStaticText:new(Panel,0,"",[]),wxStaticText:new(Panel,11,"Welcome to Rebus Game",[{style,?wxALIGN_CENTER},{size,{50,50}}]),
@@ -65,16 +65,37 @@ initFrame(Parent)->
   wxFrame:fit(Frame),
   wxFrame:show(Frame).
 
-registeredPlayers(Frame) ->
+registeredPlayers(Frame,Turns) ->
   Panel = wxPanel:new(Frame),
   wxFrame:setMinSize(Frame,{500,500}),
   Sizer = wxBoxSizer:new(?wxVERTICAL),
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
-  Button1 = wxButton:new(Panel,1,[{label,"START"},{size,{450,30}}]),
+  Button1 = wxButton:new(Panel,1,[{label,"PLAY"},{size,{200,30}}]),
   wxButton:connect(Button1,command_button_clicked,[{callback,
     fun(Evt, Obj) ->
       wxPanel:destroy(Panel),
-      serverApp:init({Frame,gameStart})
+      serverApp:gameLoop(Frame,Turns)
     end
   }]),
+  Texts = [wxStaticText:new(Panel,0,"",[]),
+    wxStaticText:new(Panel,1,"Registered clients",[{style,?wxALIGN_CENTER},{size,{-1,-1}}])],
+  Font1 = wxFont:new(10,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  wxStaticText:setFont(lists:nth(1,Texts),Font1),
+  Font2 = wxFont:new(25,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  wxStaticText:setFont(lists:nth(2,Texts),Font2),
+  Logo = wxImage:new("logo.jpg"),
+  Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)), round(wxImage:getHeight(Logo)),
+    [{quality, ?wxIMAGE_QUALITY_HIGH}])),
+  StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
+
+  [wxSizer:add(Sizer,Text,[{flag,?wxEXPAND bor ?wxALIGN_TOP},{proportion,1},{border,10}]) || Text <- Texts],
+  wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,1}]),
+  wxSizer:add(Sizer,Button1,[{flag,?wxALIGN_CENTER},{proportion,1},{border,20}]),
+
+  wxPanel:setSizer(Panel,Sizer),
+  wxSizer:fit(Sizer,Panel),
+  wxFrame:connect(Panel, close_window),
+  wxFrame:center(Frame),
+  wxFrame:fit(Frame),
+  wxFrame:show(Frame).
