@@ -9,13 +9,22 @@
 -module(leaderBoardApp).
 -author("kuba").
 -include_lib("wx/include/wx.hrl").
-
+-behavior(wx_object).
 %% API
--export([start/0]).
+-export([gameStart/1]).
 
-start ()->
-  Wx = wx:new(),
-  Frame = wxFrame:new(Wx, -1, "Rebus Game", [{size, {500, 500}}]),
+start() ->
+  Parent = wx:new(),
+  init({Parent,gameStart}).
+
+init({Parent,State}) ->
+  case State  of
+    gameStart -> gameStart(Parent)
+  end.
+
+
+gameStart (Parent)->
+  Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
   Panel = wxPanel:new(Frame),
   wxFrame:setMinSize(Frame,{500,500}),
 
