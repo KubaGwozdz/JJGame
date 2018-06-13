@@ -65,9 +65,12 @@ initFrame(Parent)->
   wxFrame:fit(Frame),
   wxFrame:show(Frame).
 
+
+
 registeredPlayers(Frame,Turns) ->
-  Panel = wxPanel:new(Frame),
-  wxFrame:setMinSize(Frame,{500,500}),
+  wxFrame:layout(Frame),
+  Size = wxFrame:getClientSize(Frame),
+  Panel = wxPanel:new(Frame,[{size,Size}]),
   Sizer = wxBoxSizer:new(?wxVERTICAL),
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
@@ -80,7 +83,7 @@ registeredPlayers(Frame,Turns) ->
   }]),
   Texts = [wxStaticText:new(Panel,0,"",[]),
     wxStaticText:new(Panel,1,"Registered clients",[{style,?wxALIGN_CENTER},{size,{-1,-1}}])],
-  Font1 = wxFont:new(10,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  Font1 = wxFont:new(10,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
   wxStaticText:setFont(lists:nth(1,Texts),Font1),
   Font2 = wxFont:new(25,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
   wxStaticText:setFont(lists:nth(2,Texts),Font2),
@@ -89,13 +92,12 @@ registeredPlayers(Frame,Turns) ->
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
 
-  [wxSizer:add(Sizer,Text,[{flag,?wxEXPAND bor ?wxALIGN_TOP},{proportion,1},{border,10}]) || Text <- Texts],
+  [wxSizer:add(Sizer,Text,[{flag,?wxEXPAND bor ?wxALIGN_CENTER},{proportion,1},{border,10}]) || Text <- Texts],
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,1}]),
   wxSizer:add(Sizer,Button1,[{flag,?wxALIGN_CENTER},{proportion,1},{border,20}]),
 
   wxPanel:setSizer(Panel,Sizer),
   wxSizer:fit(Sizer,Panel),
   wxFrame:connect(Panel, close_window),
-  wxFrame:center(Frame),
   wxFrame:fit(Frame),
   wxFrame:show(Frame).
