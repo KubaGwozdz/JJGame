@@ -11,9 +11,9 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([gameStart/1,registeredPlayers/1]).
+-export([initFrame/1,registeredPlayers/1]).
 
-gameStart(Parent)->
+initFrame(Parent)->
   Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
   Panel = wxPanel:new(Frame),
   wxFrame:setMinSize(Frame,{500,500}),
@@ -69,4 +69,16 @@ gameStart(Parent)->
   wxFrame:show(Frame).
 
 registeredPlayers(Frame) ->
-  wxPanel:new(Frame).
+  Panel = wxPanel:new(Frame),
+  wxFrame:setMinSize(Frame,{500,500}),
+  Sizer = wxBoxSizer:new(?wxVERTICAL),
+  wxPanel:setBackgroundColour(Panel,?wxWHITE),
+
+  Button1 = wxButton:new(Panel,1,[{label,"START"},{size,{450,30}}]),
+  wxButton:connect(Button1,command_button_clicked,[{callback,
+    fun(Evt, Obj) ->
+      wxPanel:destroy(Panel),
+      serverApp:getNumOfTurns(1),
+      serverApp:init({Frame,start})
+    end
+  }]),

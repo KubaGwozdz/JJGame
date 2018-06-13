@@ -17,13 +17,13 @@ start() ->
   init({Parent,gameStart}).
 
 init({Parent,State}) ->
-  case State  of
-    gameStart -> serverFrames:gameStart(Parent);
-    registration -> serverFrames:registeredPlayers(Parent), clientFrames:registerYourself()
+  case State of
+    turnsPlay -> serverFrames:initFrame(Parent), clientApp:start();
+    registration -> serverFrames:registeredPlayers(Parent), clientFrames:registerYourself();
+    gameStart -> ok
   end.
 
 getNumOfTurns(Turns) ->
   Turns.
- %% tu mam liczbe tur
   %%game:start(),
 
