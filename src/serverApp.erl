@@ -23,6 +23,8 @@ init({Parent,State}) ->
     gameStart -> ok
   end.
 
+
+
 getNumOfTurns(Turns) ->
   Turns.
   %%game:start(),

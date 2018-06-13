@@ -19,4 +19,9 @@ start() ->
   clientFrames:show_start_frame(Frame),
   receive
     register -> clientFrames:registerYourself(Frame)
+  end,
+  clientFrames:show_waiting_for_the_game(Frame),
+  receive
+    start -> gameLoop()
   end.
+
