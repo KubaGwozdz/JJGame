@@ -46,7 +46,7 @@ broadcast_clients(Rebus, Players, Msg) ->
     true ->
       [PID | Rest] = Players,
       PID ! {Msg, Rebus},
-      broadcast_puzzle(Rebus, Rest)
+      broadcast_clients(Rebus, Rest, Msg)
   end.
 
 
