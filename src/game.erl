@@ -10,7 +10,7 @@
 -author("kuba").
 
 %% API
--export([start/0,  register_players/0, register/1]).
+-export([start/0,  register_players/0, register/1, collect_answers/1, collect_choices/1, broadcast_clients/3]).
 %-record(player, {pid, name}).
 
 
@@ -33,37 +33,22 @@ register(Players) ->    % broadcasts clients registration mode
   end.
 
 
+collect_answers(Rebus) ->
+  answersServer:add_rebus(Rebus),
+  broadcast_clients(Rebus, boardServer:get_clients_pids(), give_answer).
+
+collect_choices(Rebus) ->
+  broadcast_clients(Rebus, boardServer:get_clients_pids(), choose).
 
 
-
-
-broadcast_puzzle(Rebus, Players) ->
+broadcast_clients(Rebus, Players, Msg) ->
   if length(Players) == 0 -> ok;
     true ->
       [PID | Rest] = Players,
-      PID ! {give_answer, Rebus},
+      PID ! {Msg, Rebus},
       broadcast_puzzle(Rebus, Rest)
   end.
 
 
-collect_answers(Rebus) ->
-  answersServer:add_rebus(Rebus),
-  broadcast_puzzle(Rebus, boardServer:get_clients_pids()),
-  collect(Rebus).
 
-
-
-collect(Rebus) ->   % Answers: key = Answer , Val = Pid
-  receive
-    stop -> ok;
-    {answer, Answer, Pid} ->
-      answersServer:add_answer(Rebus, Answer, Pid),
-      collect_answers(Rebus)
-  end.
-
-
-
-
-
-collect_choices(Rebus) ->1.
 
