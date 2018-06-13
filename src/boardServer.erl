@@ -15,7 +15,7 @@
 -export([start_link/0, init/1]).
 -export([handle_call/3, handle_cast/3]).
 -export([get_leaderboard/0, get_number_of_players/0, get_clients/0, get_clients_pids/0,
-  register_client/2, delete_client/1, add_client_point/1]).
+  add_client/1, register_client/2, delete_client/1, add_client_point/1]).
 -export([create_leaderboard/0]).
 
 -record(leaderBoard, {board}).
@@ -42,6 +42,9 @@ get_clients() ->
 
 get_clients_pids() ->
   gen_server:call({global, boardServer}, {get_clients_pids}).
+
+add_client(PID) ->
+  gen_server:call({global, boardServer}, {add_client, PID}).
 
 register_client(PID, Name) ->
   gen_server:call({global, boardServer}, {register_client, PID, Name}).
@@ -81,8 +84,24 @@ handle_call({register_client, PID, Name}, _From, Leaderboard) ->
   Names = lists:map(fun(#player{name=X}) -> X end, N),
   AlreadyRegisterdPID = lists:any(fun (X) -> X == PID end, Players),
   AlreadyRegisterdName = lists:any(fun (X) -> X == Name end, Names),
-  if ((AlreadyRegisterdPID /= true) and (AlreadyRegisterdName /= true)) ->
-    L2  = maps:put(PID, #player{name = Name, points = 0}, L1),
+  if (AlreadyRegisterdPID == true) ->
+    {_,#player{points = _, name = IsName}} = maps:find(PID,L1),
+    if ((AlreadyRegisterdName /= true) and (IsName == undefined)) ->
+      L2  = maps:update(PID, #player{name = Name, points = 0}, L1),
+      L3 = #leaderBoard{board = L2},
+      {reply, ok, L3};
+      true -> {reply, {allreadyRegisteredName, IsName}, Leaderboard}
+    end;
+    true -> {reply, pidNotRegistered, Leaderboard}
+  end;
+
+handle_call({add_client, PID}, _From, Leaderboard) ->
+  L1 = Leaderboard#leaderBoard.board,
+  Players = maps:keys(L1),
+  N = maps:values(L1),
+  AlreadyRegisterdPID = lists:any(fun (X) -> X == PID end, Players),
+  if (AlreadyRegisterdPID /= true) ->
+    L2  = maps:put(PID, #player{name = undefined}, L1),
     L3 = #leaderBoard{board = L2},
     {reply, ok, L3};
     true -> {reply, allreadyRegistered, Leaderboard}

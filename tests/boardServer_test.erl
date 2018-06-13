@@ -17,6 +17,8 @@
 
 register_client_test() ->
   boardServer:start_link(),
+  boardServer:add_client(1),
+  boardServer:add_client(2),
   boardServer:register_client(1, "Kuba"),
   boardServer:register_client(1, "Julian"),
   boardServer:register_client(2,"Kuba"),
@@ -26,6 +28,8 @@ register_client_test() ->
 
 add_client_point_test() ->
   boardServer:start_link(),
+  boardServer:add_client(1),
+  boardServer:add_client(2),
   boardServer:register_client(1, "Kuba"),
   boardServer:register_client(2, "Julian"),
   boardServer:add_client_point(1),
