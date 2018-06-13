@@ -42,7 +42,7 @@ show_start_frame(Frame) ->
 
 show_register_frame(Frame) -> % when got Name do sth from clientApp
   Panel = wxPanel:new(Frame),
-  %wxFrame:setMinSize(Frame,{500,500}),
+  wxFrame:setMinSize(Frame,{500,500}),
   Sizer = wxBoxSizer:new(?wxVERTICAL),
 
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
@@ -54,11 +54,11 @@ show_register_frame(Frame) -> % when got Name do sth from clientApp
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
   TextCtrl  = wxTextCtrl:new(Panel, 1, [{value, ""},
-    {style, ?wxDEFAULT}]),
+    {style,?wxALIGN_CENTER},{size,{250,50}}]),
 
   [wxSizer:add(Sizer,Text,[{flag,?wxEXPAND bor ?wxALIGN_CENTER},{proportion,1},{border,10}]) || Text <- Texts],
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,1}]),
-  wxSizer:add(Sizer,TextCtrl,[{flag,?wxALIGN_CENTER},{proportion,0},{border,100}]),
+  wxSizer:add(Sizer,TextCtrl,[{flag, ?wxALIGN_CENTER}, {proportion,1},{border,20}]),
 
   wxPanel:setSizer(Panel,Sizer),
   wxSizer:fit(Sizer,Panel),
