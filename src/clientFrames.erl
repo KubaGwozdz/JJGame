@@ -13,8 +13,7 @@
 %% API
 -export([registerYourself/1,show_start_frame/1]).
 
-show_start_frame(Parent) ->
-  Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
+show_start_frame(Frame) ->
   Panel = wxPanel:new(Frame),
   wxFrame:setMinSize(Frame,{500,500}),
   Sizer = wxBoxSizer:new(?wxVERTICAL),

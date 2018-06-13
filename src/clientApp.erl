@@ -15,7 +15,8 @@
 
 start() ->
   Parent = wx:new(),
+  Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
+  clientFrames:show_start_frame(Frame),
   receive
-    startingGame -> Parent = clientFrames:show_start_frame(Parent);
-    register -> clientFrames:registerYourself(Parent)
+    register -> clientFrames:registerYourself(Frame)
   end.
