@@ -11,9 +11,10 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([initFrame/1,registeredPlayers/2]).
+-export([initFrame/0,registeredPlayers/2]).
 
-initFrame(Parent)->
+initFrame()->
+  Parent = wx:new(),
   Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
   Panel = wxPanel:new(Frame),
   wxFrame:setMinSize(Frame,{500,500}),
@@ -21,26 +22,9 @@ initFrame(Parent)->
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
   Button1 = wxButton:new(Panel,1,[{label,"PLAY 1 TURN"},{size,{450,30}}]),
-  wxButton:connect(Button1,command_button_clicked,[{callback,
-    fun(Evt, Obj) ->
-      wxPanel:destroy(Panel),
-      registeredPlayers(Frame,1)
-    end
-  }]),
   Button2 = wxButton:new(Panel,2,[{label,"PLAY 5 TURNS"},{size,{450,30}}]),
-  wxButton:connect(Button2,command_button_clicked,[{callback,
-    fun(Evt, Obj) ->
-      wxPanel:destroy(Panel),
-      registeredPlayers(Frame,5)
-    end
-  }]),
   Button3 = wxButton:new(Panel,3,[{label,"PLAY 10 TURNS"},{size,{450,30}}]),
-  wxButton:connect(Button3,command_button_clicked,[{callback,
-    fun(Evt, Obj) ->
-      wxPanel:destroy(Panel),
-      registeredPlayers(Frame,10)
-    end
-  }]),
+
   Texts = [wxStaticText:new(Panel,0,"",[]),wxStaticText:new(Panel,11,"Welcome to Rebus Game",[{style,?wxALIGN_CENTER},{size,{50,50}}]),
     wxStaticText:new(Panel,12,"Choose numer of turns to play",[{style,?wxALIGN_CENTER},{size,{50,50}}])],
   Font = wxFont:new(30,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
@@ -61,26 +45,21 @@ initFrame(Parent)->
   wxPanel:setSizer(Panel,Sizer),
   wxSizer:fit(Sizer,Panel),
   wxFrame:connect(Panel, close_window),
+  wxPanel:connect(Panel,command_button_clicked),
   wxFrame:center(Frame),
   wxFrame:fit(Frame),
-  wxFrame:show(Frame).
-
+  wxFrame:show(Frame),
+  {Frame,Panel}.
 
 
 registeredPlayers(Frame,Turns) ->
-  wxFrame:layout(Frame),
-  Size = wxFrame:getClientSize(Frame),
-  Panel = wxPanel:new(Frame,[{size,Size}]),
+  Panel = wxPanel:new(Frame),
   Sizer = wxBoxSizer:new(?wxVERTICAL),
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
-  Button1 = wxButton:new(Panel,1,[{label,"PLAY"},{size,{200,30}}]),
-  wxButton:connect(Button1,command_button_clicked,[{callback,
-    fun(Evt, Obj) ->
-      wxPanel:destroy(Panel),
-      serverApp:gameLoop(Frame,Turns)
-    end
-  }]),
+  Button1 = wxButton:new(Panel,4,[{label,"PLAY"},{size,{200,30}}]),
+  Button2 = wxButton:new(Panel,5,[{label,"EXIT"},{size,{200,30}}]),
+
   Texts = [wxStaticText:new(Panel,0,"",[]),
     wxStaticText:new(Panel,1,"Registered clients",[{style,?wxALIGN_CENTER},{size,{-1,-1}}])],
   Font1 = wxFont:new(10,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
@@ -94,10 +73,15 @@ registeredPlayers(Frame,Turns) ->
 
   [wxSizer:add(Sizer,Text,[{flag,?wxEXPAND bor ?wxALIGN_CENTER},{proportion,1},{border,10}]) || Text <- Texts],
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,1}]),
-  wxSizer:add(Sizer,Button1,[{flag,?wxALIGN_CENTER},{proportion,1},{border,20}]),
+  wxSizer:add(Sizer,Button1,[{flag,?wxALIGN_CENTER},{proportion,1},{border,10}]),
+  wxSizer:add(Sizer,Button2,[{flag,?wxALIGN_CENTER},{proportion,1},{border,10}]),
 
   wxPanel:setSizer(Panel,Sizer),
   wxSizer:fit(Sizer,Panel),
-  wxFrame:connect(Panel, close_window),
+  wxPanel:fit(Panel),
+  wxFrame:connect(Frame, close_window),
+  wxPanel:connect(Panel, command_button_clicked),
   wxFrame:fit(Frame),
-  wxFrame:show(Frame).
+  wxFrame:showFullScreen(Frame,true),
+  wxFrame:show(Frame),
+  {Frame,Panel,Turns}.
