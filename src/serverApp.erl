@@ -13,6 +13,7 @@
 -export([loop/1,start/0,gameLoop/2]).
 
 start() ->
+  spawn(fun() -> game:start() end),
   State = serverFrames:initFrame(),
   loop(State).
 
