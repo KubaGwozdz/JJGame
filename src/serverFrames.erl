@@ -11,7 +11,7 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([initFrame/0,registeredPlayers/2,handleRefresh/4]).
+-export([initFrame/0,registeredPlayers/2]).
 
 initFrame()->
   Parent = wx:new(),
