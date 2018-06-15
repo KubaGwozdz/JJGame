@@ -45,8 +45,8 @@ broadcast_clients(Rebus, Players, Msg) ->
   if length(Players) == 0 -> ok;
     true ->
       [PID | Rest] = Players,
-      PID ! {Msg, Rebus}
-      %%broadcast_puzzle(Rebus, Rest)
+      PID ! {Msg, Rebus},
+      broadcast_clients(Rebus, Rest, Msg)
   end.
 
 

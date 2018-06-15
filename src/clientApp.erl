@@ -19,7 +19,11 @@ start() ->
   clientFrames:show_start_frame(Frame),
   boardServer:add_client(self()),   %ważne dziobo
   receive
-    register -> clientFrames:registerYourself(Frame)
-  end,
-  clientFrames:show_waiting_for_the_game(Frame).
+    register -> clientFrames:show_register_frame(Frame)
+  end.
+
+waitin_for_game(Name, Frame) ->
+  client:register(self(), Name),
+  clientFrames:show_waiting_frame(Frame).
+
 
