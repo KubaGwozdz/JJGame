@@ -43,3 +43,19 @@ add_client_point_test() ->
   [?assertEqual(boardServer:get_leaderboard(),{leaderBoard,#{1 => {player,"Kuba",4},
     2 => {player,"Julian",3}}})].
 
+get_clients_test() ->
+  boardServer:start_link(),
+  boardServer:add_client(1),
+  boardServer:add_client(2),
+  boardServer:register_client(1, "Kuba"),
+  boardServer:register_client(2, "Julian"),
+  [?assertEqual(boardServer:get_clients(),[{1,{player,"Kuba",4}},{2,{player,"Julian",3}}])].
+
+
+get_clients_names_test() ->
+  boardServer:start_link(),
+  boardServer:add_client(1),
+  boardServer:add_client(2),
+  boardServer:register_client(1, "Kuba"),
+  boardServer:register_client(2, "Julian"),
+  [?assertEqual(boardServer:get_clients_names(),["Kuba", "Julian"])].
