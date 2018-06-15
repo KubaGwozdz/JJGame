@@ -11,7 +11,7 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([initFrame/0,registeredPlayers/2]).
+-export([initFrame/0,registeredPlayers/2,handleRefresh/4]).
 
 initFrame()->
   Parent = wx:new(),
@@ -51,7 +51,6 @@ initFrame()->
   wxFrame:show(Frame),
   {Frame,Panel}.
 
-
 registeredPlayers(Frame,Turns) ->
   Panel = wxPanel:new(Frame),
   Sizer = wxBoxSizer:new(?wxVERTICAL),
@@ -60,6 +59,8 @@ registeredPlayers(Frame,Turns) ->
   Button1 = wxButton:new(Panel,4,[{label,"PLAY"},{size,{200,30}}]),
   Button2 = wxButton:new(Panel,5,[{label,"EXIT"},{size,{200,30}}]),
 
+  ListOfPlayers = boardServer:get_clients_names(),
+  Players = [wxStaticText:new(Panel,0,P,[]) || P <- ListOfPlayers],
   Texts = [wxStaticText:new(Panel,0,"",[]),
     wxStaticText:new(Panel,1,"Registered clients",[{style,?wxALIGN_CENTER},{size,{-1,-1}}])],
   Font1 = wxFont:new(10,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
@@ -73,6 +74,7 @@ registeredPlayers(Frame,Turns) ->
 
   [wxSizer:add(Sizer,Text,[{flag,?wxEXPAND bor ?wxALIGN_CENTER},{proportion,1},{border,10}]) || Text <- Texts],
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,1}]),
+  [wxSizer:add(Sizer,Player,[{flag,?wxEXPAND bor ?wxALIGN_CENTER},{proportion,1},{border,4}]) || Player <- Players],
   wxSizer:add(Sizer,Button1,[{flag,?wxALIGN_CENTER},{proportion,1},{border,10}]),
   wxSizer:add(Sizer,Button2,[{flag,?wxALIGN_CENTER},{proportion,1},{border,10}]),
 
