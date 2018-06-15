@@ -22,8 +22,9 @@ start() ->
     register -> clientFrames:show_register_frame(Frame)
   end.
 
-waitin_for_game(Name, Frame) ->
-  client:register(self(), Name),
-  clientFrames:show_waiting_frame(Frame).
+
+
+
+
 
 
