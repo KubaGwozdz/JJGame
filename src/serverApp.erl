@@ -22,14 +22,17 @@ loop(State) ->
   receive
     #wx{event = #wxClose{}} -> wxWindow:destroy(Frame), ok;
     #wx{id = 1, event = #wxCommand{type = command_button_clicked}} ->
+      game:register_players(),
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns} = serverFrames:registeredPlayers(Frame,1),
       loop({Frame2,Panel2});
     #wx{id = 2, event = #wxCommand{type = command_button_clicked}} ->
+      game:register_players(),
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns} = serverFrames:registeredPlayers(Frame,5),
       loop({Frame2,Panel2});
     #wx{id = 3, event = #wxCommand{type = command_button_clicked}} ->
+      game:register_players(),
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns} = serverFrames:registeredPlayers(Frame,10),
       loop({Frame2,Panel2});
@@ -42,5 +45,3 @@ loop(State) ->
 
 gameLoop(Frame,Turns) ->
   Turns.
-  %%game:start(),
-
