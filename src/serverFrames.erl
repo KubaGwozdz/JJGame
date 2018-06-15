@@ -60,10 +60,11 @@ registeredPlayers(Frame,Turns) ->
   Button2 = wxButton:new(Panel,5,[{label,"EXIT"},{size,{200,30}}]),
 
   ListOfPlayers = boardServer:get_clients_names(),
-  Players = [wxStaticText:new(Panel,0,P,[]) || P <- ListOfPlayers],
+  Players = [wxStaticText:new(Panel,0,P,[{style,?wxALIGN_CENTER},{size,{-1,-1}}]) || P <- ListOfPlayers],
   Texts = [wxStaticText:new(Panel,0,"",[]),
     wxStaticText:new(Panel,1,"Registered clients",[{style,?wxALIGN_CENTER},{size,{-1,-1}}])],
   Font1 = wxFont:new(10,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
+  [wxStaticText:setFont(Name,Font1) || Name <- Players],
   wxStaticText:setFont(lists:nth(1,Texts),Font1),
   Font2 = wxFont:new(25,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
   wxStaticText:setFont(lists:nth(2,Texts),Font2),
