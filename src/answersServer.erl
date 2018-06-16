@@ -15,7 +15,7 @@
 %% API
 -export([start_link/0, init/1]).
 -export([handle_call/3]).
--export([get_answers/0,add_rebus/1, add_answer/3, get_rebus_answers/1, add_point/2]).
+-export([get_answers/0,add_rebus/1, add_answer/3, get_rebus_answers/1, add_point/2, get_reb_answers_list/1]).
 
 
 start_link() ->
@@ -33,6 +33,8 @@ add_answer(Rebus, Answer, PID) -> gen_server:call({global, ?MODULE}, {add_answer
 add_point(Rebus, Answer) ->gen_server:call({global, ?MODULE}, {add_point,Rebus, Answer}).
 
 get_rebus_answers(Rebus) -> gen_server:call({global, ?MODULE}, {get_rebus_answers, Rebus}).
+
+get_reb_answers_list(Rebus) -> gen_server:call({global, ?MODULE}, {get_reb_answers_list, Rebus}).
 
 
 %% CALLBACKS
@@ -80,7 +82,14 @@ handle_call({add_point,Rebus, Answer}, _From, Answers) ->
       true -> {reply, {wrongAnswer,An1, RebusAnswers}, Answers}
     end;
     true -> {reply, rebusDoesNotExist, Answers}
-  end.
+  end;
+
+
+handle_call({get_reb_answers_list, Rebus}, _From, Answers) ->
+  RebusAnwers = maps:get(Rebus, Answers),
+  AnsList = lists:map(fun(#answer{answer = A}) -> A end, RebusAnwers),
+  {reply, AnsList, Answers}.
+
 
 
 
