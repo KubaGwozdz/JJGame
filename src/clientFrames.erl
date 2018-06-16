@@ -11,7 +11,8 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([show_register_frame/1, show_start_frame/1, show_waiting_frame/2, show_give_answer_frame/3,show_choose_answer_frame/3]).
+-export([show_register_frame/1, show_start_frame/1, show_waiting_frame/2, show_give_answer_frame/3,
+  show_choose_answer_frame/3, show_your_points_frame/3, your_points_refresh/5]).
 
 show_start_frame(Frame) ->
   Panel = wxPanel:new(Frame),
@@ -215,11 +216,67 @@ show_choose_answer_frame({Frame,P}, Rebus, Name) ->
   wxFrame:connect( Frame, close_window),
   wxPanel:connect(Panel, command_button_clicked),
 
-  clientApp:game_loop({Frame,Panel}, Name,{Rebus}).
+  clientApp:game_loop({Frame,Panel}, Name,{Rebus, AnswersBox, Answers}).
 
 
 
+show_your_points_frame({Frame, P},Rebus, Name) ->
+  wxPanel:destroy(P),
+  Panel = wxPanel:new(Frame),
+  wxFrame:setMinSize(Frame,{500,500}),
+  Sizer = wxBoxSizer:new(?wxVERTICAL),
+  wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
+  Logo = wxImage:new("logo.jpg"),
+  Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)*1.5), round(wxImage:getHeight(Logo)*1.5),
+    [{quality, ?wxIMAGE_QUALITY_HIGH}])),
+  StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
+
+  Text = wxStaticText:new(Panel,11,"Your points:",[{style,?wxALIGN_CENTER},{size,{50,50}}]),
+  NameT = wxStaticText:new(Panel,11,Name,[{style,?wxALIGN_CENTER},{size,{50,50}}]),
+
+  Font = wxFont:new(30,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  Font1 = wxFont:new(75,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
+  Font2 = wxFont:new(20,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
+
+  wxStaticText:setFont(NameT,Font),
+  wxStaticText:setFont(Text,Font2),
+
+  Points = wxStaticText:new(Panel,11,[integer_to_list(boardServer:get_clients_points(self()))],[{style,?wxALIGN_CENTER},{size,{70,70}}]),
+  wxStaticText:setFont(Points,Font1),
+
+
+
+  wxSizer:addSpacer(Sizer, 20),
+  wxSizer:add(Sizer,Text,[{flag,?wxALIGN_CENTER bor ?wxEXPAND},{proportion,1}]),
+  wxSizer:add(Sizer,NameT,[{flag,?wxALIGN_CENTER bor ?wxEXPAND},{proportion,1}]),
+  wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,1}]),
+
+  %wxSizer:addSpacer(Sizer, 20),
+  wxSizer:add(Sizer,Points,[{flag,?wxALIGN_CENTER bor ?wxEXPAND},{proportion,1}]),
+  wxSizer:addSpacer(Sizer, 120),
+
+
+  wxPanel:setSizer(Panel,Sizer),
+  wxSizer:fit(Sizer,Panel),
+  wxFrame:center(Frame),
+  wxFrame:fit(Frame),
+  wxFrame:show(Frame),boardServer:get_clients_points(self()),
+  your_points_refresh({Frame, Panel}, Rebus, Name, Points, Sizer).
+
+
+your_points_refresh({Frame, Panel}, Rebus,  Name, Points, Sizer) ->
+  receive
+    #wx{event=#wxClose{}} ->
+      io:format("~p Closing window ~n",[self()]),
+      wxWindow:destroy(Frame),
+      ok;
+    {give_answer, Rebus} ->
+      clientFrames:show_give_answer_frame({Frame, Panel}, Rebus, Name)
+
+    after
+      10000 -> wxStaticText:setLabel(Points, [integer_to_list(boardServer:get_clients_points(self()))]) %show_your_points_frame({Frame, Panel}, Rebus, Name)
+  end.
 
 
 

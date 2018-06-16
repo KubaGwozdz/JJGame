@@ -10,7 +10,7 @@
 -author("kuba").
 
 %% API
--export([choose_answer_view/0, give_answer_view/0,waiting_view/0]).
+-export([choose_answer_view/0, give_answer_view/0,waiting_view/0, your_points_view/0]).
 
 
 choose_answer_view() ->
@@ -36,3 +36,13 @@ waiting_view() ->
   Parent = wx:new(),
   Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
   clientFrames:show_waiting_frame({Frame,wxPanel:new(Frame)}, "Kuba").
+
+
+your_points_view() ->
+  Parent = wx:new(),
+  Frame = wxFrame:new(Parent, -1, "Rebus Game", [{size, {500, 500}}]),
+  boardServer:start_link(),
+  boardServer:add_client(self()),
+  boardServer:register_client(self(),"Kuba"),
+  boardServer:add_client_point(self()),
+  clientFrames:show_your_points_frame({Frame,wxPanel:new(Frame)}, 1, "Kuba").

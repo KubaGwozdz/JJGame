@@ -43,7 +43,7 @@ register_loop(State) ->
       clientFrames:show_waiting_frame(Frame, Name)
   end.
 
-game_loop(Frame, Name, Others) ->
+game_loop({Frame,Panel}, Name, Others) ->
   receive
   % a connection get the close_window signal
   % and sends this message to the server
@@ -52,19 +52,29 @@ game_loop(Frame, Name, Others) ->
       wxWindow:destroy(Frame),
       ok;
     {give_answer, Rebus} ->
-      clientFrames:show_give_answer_frame(Frame, Rebus, Name);
+      clientFrames:show_give_answer_frame({Frame, Panel}, Rebus, Name);
+
+    % give answer frame ok button
     #wx{id = 100, event=#wxCommand{type = command_button_clicked}} ->
       {TextCtrl, R} = Others,
       Answer = wxTextCtrl:getValue(TextCtrl),
       client:send_answer(R, Answer, self()),
-      clientFrames:show_waiting_frame(Frame, Name);
+      clientFrames:show_waiting_frame({Frame, Panel}, Name);
+
     {choose, Reb} ->
-      clientFrames:show_choose_answer_frame(Frame,Reb, Name);
+      clientFrames:show_choose_answer_frame({Frame, Panel},Reb, Name);
+
+    % choose answer frame ok button
     #wx{id = 101, event=#wxCommand{type = command_button_clicked}} ->
-      {R} = Others,
+      {R, AnswersBox, Answers} = Others,
+      Result = wxListBox:getSelection(AnswersBox),
+      Answr = lists:nth(Result+1, Answers),
+      client:send_choice(R,Answr),
+      clientFrames:show_your_points_frame({Frame, Panel},R, Name)
+
       %Answer = wxTextCtrl:getValue(TextCtrl),
       %client:send_answer(R, Answer, self()),
-      clientFrames:show_waiting_frame(Frame, Name)
+      %clientFrames:show_waiting_frame({Frame, Panel}, Name)
   end.
 
 
