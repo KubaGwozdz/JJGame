@@ -111,14 +111,14 @@ rebusDisplay(Frame,Turns) ->
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
   Time = wxStaticText:new(Panel,0,"40",[{style,?wxALIGN_CENTER},{size,{-1,-1}}]),
-  Font2 = wxFont:new(25,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  Font2 = wxFont:new(35,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
   wxStaticText:setFont(Time,Font2),
 
   wxSizer:addSpacer(Sizer,100),
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,0}]),
   wxSizer:addSpacer(Sizer,60),
   wxSizer:add(Sizer,Text,[{flag,?wxALIGN_CENTER},{proportion,1}]),
-  wxSizer:addSpacer(Sizer,30),
+  wxSizer:addSpacer(Sizer,20),
   wxSizer:add(Sizer,Time,[{flag,?wxALIGN_CENTER},{proportion,1}]),
 
   wxPanel:setSizer(Panel,Sizer),
@@ -146,14 +146,14 @@ rebusAnswer(Frame,Turns) ->
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
   Time = wxStaticText:new(Panel,0,"30",[{style,?wxALIGN_CENTER},{size,{-1,-1}}]),
-  Font2 = wxFont:new(25,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  Font2 = wxFont:new(35,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
   wxStaticText:setFont(Time,Font2),
 
   wxSizer:addSpacer(Sizer,100),
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,0}]),
   wxSizer:addSpacer(Sizer,60),
   wxSizer:add(Sizer,Text,[{flag,?wxALIGN_CENTER},{proportion,1}]),
-  wxSizer:addSpacer(Sizer,30),
+  wxSizer:addSpacer(Sizer,20),
   wxSizer:add(Sizer,Time,[{flag,?wxALIGN_CENTER},{proportion,1}]),
 
   wxPanel:setSizer(Panel,Sizer),
