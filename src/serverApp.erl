@@ -45,7 +45,8 @@ registerLoop(State) ->
       game:collect_answers(Turns),
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns2,Time} = serverFrames:rebusDisplay(Frame,Turns),
-      rebusDisplayLoop(Frame,Panel2,Turns,4,Time);
+      game:collect_answers(Turns),
+      rebusDisplayLoop(Frame,Panel2,Turns,40,Time);
     #wx{id = 5, event = #wxCommand{type = command_button_clicked}} ->
       wxFrame:destroy(Frame),
       ok
@@ -64,8 +65,9 @@ rebusDisplayLoop(Frame,Panel,Turns,Counter,Time) ->
       if
         Counter == 0 ->
           wxPanel:destroy(Panel),
+          game:collect_choices(Turns),
           {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusAnswer(Frame,Turns),
-          rebusAnswerLoop(Frame2,Panel2,Turns,3,Time2);
+          rebusAnswerLoop(Frame2,Panel2,Turns,30,Time2);
         true ->
           NewCounter = Counter - 1,
           Seconds = integer_to_list(NewCounter),
@@ -94,8 +96,9 @@ rebusAnswerLoop(Frame,Panel,Turns,Counter,Time) ->
                   wxPanel:destroy(Panel3);
                 true -> ok
               end,
+              game:collect_answers(NextTurn),
               {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusDisplay(Frame,NextTurn),
-              rebusDisplayLoop(Frame,Panel2,NextTurn,4,Time2)
+              rebusDisplayLoop(Frame,Panel2,NextTurn,40,Time2)
           end;
         true ->
               NewCounter = Counter - 1,
