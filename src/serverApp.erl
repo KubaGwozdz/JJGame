@@ -10,7 +10,7 @@
 -author("kuba").
 -include_lib("wx/include/wx.hrl").
 %% API
--export([loop/1,start/0,gameLoop/2]).
+-export([loop/1,start/0,gameLoop/3]).
 
 start() ->
   spawn(fun() -> game:start() end),
@@ -42,10 +42,12 @@ registerLoop(State) ->
   {Frame,Panel,Turns} = State,
   receive
     #wx{id = 4, event = #wxCommand{type = command_button_clicked}} ->
+      game:collect_answers(Turns),
       wxPanel:destroy(Panel),
-      gameLoop(Frame,Turns);
+      gameLoop(Frame,Turns,40000);
     #wx{id = 5, event = #wxCommand{type = command_button_clicked}} ->
-      wxFrame:destroy(Frame)
+      wxFrame:destroy(Frame),
+      ok
   after
     3000 ->
       wxPanel:destroy(Panel),
@@ -53,5 +55,6 @@ registerLoop(State) ->
       registerLoop({Frame2,Panel2,Turns2})
   end.
 
-gameLoop(Frame,Turns) ->
-  Turns.
+gameLoop(Frame,Turns,Counter) ->
+  {Frame2,Panel,Turns2} = serverFrames:rebusDisplay(Frame,Turns),
+  ok.
