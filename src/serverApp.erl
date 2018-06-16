@@ -10,7 +10,7 @@
 -author("kuba").
 -include_lib("wx/include/wx.hrl").
 %% API
--export([loop/1,start/0,gameLoop/3]).
+-export([loop/1,start/0,rebusDisplayLoop/5,rebusAnswerLoop/5]).
 
 start() ->
   spawn(fun() -> game:start() end),
@@ -44,7 +44,8 @@ registerLoop(State) ->
     #wx{id = 4, event = #wxCommand{type = command_button_clicked}} ->
       game:collect_answers(Turns),
       wxPanel:destroy(Panel),
-      gameLoop(Frame,Turns,40000);
+      {Frame2,Panel2,Turns2,Time} = serverFrames:rebusDisplay(Frame,Turns),
+      rebusDisplayLoop(Frame,Panel2,Turns,40,Time);
     #wx{id = 5, event = #wxCommand{type = command_button_clicked}} ->
       wxFrame:destroy(Frame),
       ok
@@ -55,6 +56,45 @@ registerLoop(State) ->
       registerLoop({Frame2,Panel2,Turns2})
   end.
 
-gameLoop(Frame,Turns,Counter) ->
-  {Frame2,Panel,Turns2} = serverFrames:rebusDisplay(Frame,Turns),
-  ok.
+rebusDisplayLoop(Frame,Panel,Turns,Counter,Time) ->
+  receive
+    #wx{event = #wxClose{}} -> wxWindow:destroy(Frame), ok
+  after
+    1000 ->
+      if
+        Counter == 0 ->
+          wxPanel:destroy(Panel),
+          {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusAnswer(Frame,Turns),
+          rebusAnswerLoop(Frame2,Panel2,Turns,30,Time2);
+        true ->
+          NewCounter = Counter - 1,
+          Seconds = integer_to_list(NewCounter),
+          wxStaticText:setLabel(Time,Seconds),
+          rebusDisplayLoop(Frame,Panel,Turns,NewCounter,Time)
+        end
+  end.
+
+rebusAnswerLoop(Frame,Panel,Turns,Counter,Time) ->
+  if
+    Turns == 0 ->
+      wxPanel:destroy(Panel),
+      serverFrames:leaderBoard(Frame);
+    true ->
+      receive
+        #wx{event = #wxClose{}} -> wxWindow:destroy(Frame), ok
+      after
+        1000 ->
+          if
+            Counter == 0 ->
+              NextTurn = Turns - 1,
+              wxPanel:destroy(Panel),
+              {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusDisplay(Frame,NextTurn),
+              rebusDisplayLoop(Frame,Panel2,NextTurn,40,Time2);
+            true ->
+              NewCounter = Counter - 1,
+              Seconds = integer_to_list(NewCounter),
+              wxStaticText:setLabel(Time,Seconds),
+              rebusAnswerLoop(Frame,Panel,Turns,NewCounter,Time)
+          end
+      end
+  end.

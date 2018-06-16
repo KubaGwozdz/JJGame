@@ -31,7 +31,7 @@ initFrame()->
   wxStaticText:setFont(lists:nth(2,Texts),Font),
   Font2 = wxFont:new(20,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
   wxStaticText:setFont(lists:nth(3,Texts),Font2),
-  Logo = wxImage:new("../logo.jpg"),
+  Logo = wxImage:new("logo.jpg"),
   Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)*1.5), round(wxImage:getHeight(Logo)*1.5),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
@@ -69,7 +69,7 @@ registeredPlayers(Frame,Turns) ->
   [wxStaticText:setFont(Name,Font1) || Name <- Players],
   Font2 = wxFont:new(29,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
   wxStaticText:setFont(Text,Font2),
-  Logo = wxImage:new("../logo.jpg"),
+  Logo = wxImage:new("logo.jpg"),
   Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)), round(wxImage:getHeight(Logo)),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
@@ -102,7 +102,7 @@ rebusDisplay(Frame,Turns) ->
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
   RebusNumber = integer_to_list(Turns),
-  RebusName = "../" ++ RebusNumber ++ ".jpg",
+  RebusName = RebusNumber ++ ".jpg",
   Rebus = wxImage:new(RebusName),
   Text = wxStaticText:new(Panel,0,"Write your answer",[{style,?wxALIGN_CENTER},{size,{-1,-1}}]),
   Font = wxFont:new(20,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
@@ -110,11 +110,16 @@ rebusDisplay(Frame,Turns) ->
   Bitmap = wxBitmap:new(wxImage:scale(Rebus,round(wxImage:getWidth(Rebus))*1, round(wxImage:getHeight(Rebus)*1),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
+  Time = wxStaticText:new(Panel,0,"40",[{style,?wxALIGN_CENTER},{size,{-1,-1}}]),
+  Font2 = wxFont:new(25,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  wxStaticText:setFont(Time,Font2),
 
   wxSizer:addSpacer(Sizer,100),
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,0}]),
   wxSizer:addSpacer(Sizer,60),
   wxSizer:add(Sizer,Text,[{flag,?wxALIGN_CENTER},{proportion,1}]),
+  wxSizer:addSpacer(Sizer,30),
+  wxSizer:add(Sizer,Time,[{flag,?wxALIGN_CENTER},{proportion,1}]),
 
   wxPanel:setSizer(Panel,Sizer),
   wxSizer:fit(Sizer,Panel),
@@ -123,7 +128,7 @@ rebusDisplay(Frame,Turns) ->
   wxFrame:fit(Frame),
   wxFrame:showFullScreen(Frame,true),
   wxFrame:show(Frame),
-  {Frame,Panel,Turns}.
+  {Frame,Panel,Turns,Time}.
 
 
 rebusAnswer(Frame,Turns) ->
@@ -132,7 +137,7 @@ rebusAnswer(Frame,Turns) ->
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
   RebusNumber = integer_to_list(Turns),
-  RebusName = "../" ++ RebusNumber ++ ".jpg",
+  RebusName = RebusNumber ++ ".jpg",
   Rebus = wxImage:new(RebusName),
   Text = wxStaticText:new(Panel,0,"Choose best answer",[{style,?wxALIGN_CENTER},{size,{-1,-1}}]),
   Font = wxFont:new(20,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
@@ -140,11 +145,16 @@ rebusAnswer(Frame,Turns) ->
   Bitmap = wxBitmap:new(wxImage:scale(Rebus,round(wxImage:getWidth(Rebus))*1, round(wxImage:getHeight(Rebus)*1),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
+  Time = wxStaticText:new(Panel,0,"30",[{style,?wxALIGN_CENTER},{size,{-1,-1}}]),
+  Font2 = wxFont:new(25,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  wxStaticText:setFont(Time,Font2),
 
   wxSizer:addSpacer(Sizer,100),
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,0}]),
   wxSizer:addSpacer(Sizer,60),
   wxSizer:add(Sizer,Text,[{flag,?wxALIGN_CENTER},{proportion,1}]),
+  wxSizer:addSpacer(Sizer,30),
+  wxSizer:add(Sizer,Time,[{flag,?wxALIGN_CENTER},{proportion,1}]),
 
   wxPanel:setSizer(Panel,Sizer),
   wxSizer:fit(Sizer,Panel),
@@ -153,8 +163,7 @@ rebusAnswer(Frame,Turns) ->
   wxFrame:fit(Frame),
   wxFrame:showFullScreen(Frame,true),
   wxFrame:show(Frame),
-  NextTurn = Turns - 1,
-  {Frame,Panel,NextTurn}.
+  {Frame,Panel,Turns,Time}.
 
 leaderBoard(Frame) ->
   ok.
