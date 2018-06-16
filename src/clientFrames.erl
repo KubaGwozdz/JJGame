@@ -26,7 +26,7 @@ show_start_frame(Frame) ->
   wxStaticText:setFont(lists:nth(2,Texts),Font),
   Font2 = wxFont:new(20,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
   wxStaticText:setFont(lists:nth(3,Texts),Font2),
-  Logo = wxImage:new("logo.jpg"),
+  Logo = wxImage:new("../logo.jpg"),
   Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)*1.5), round(wxImage:getHeight(Logo)*1.5),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
@@ -53,7 +53,7 @@ show_register_frame({Frame, P}) -> % when got Name do sth from clientApp
   Font = wxFont:new(30,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
   wxStaticText:setFont(lists:nth(2,Texts),Font),
 
-  Logo = wxImage:new("logo.jpg"),
+  Logo = wxImage:new("../logo.jpg"),
 
   Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)*1.5), round(wxImage:getHeight(Logo)*1.5),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
@@ -105,7 +105,7 @@ show_waiting_frame({Frame, P}, Name) ->
   wxStaticText:setFont(lists:nth(2,NameL),Font),
   wxStaticText:setFont(lists:nth(2,Texts),Font2),
 
-  Logo = wxImage:new("logo.jpg"),
+  Logo = wxImage:new("../logo.jpg"),
 
   Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)*1.5), round(wxImage:getHeight(Logo)*1.5),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
@@ -145,7 +145,7 @@ show_give_answer_frame({Frame,P}, Rebus, Name) ->
   TextCtrl  = wxTextCtrl:new(Panel, 1001, [{style, ?wxTE_CENTRE}, {style, ?wxTE_PROCESS_ENTER}, {size, {200,25}}]),
   Button = wxButton:new(Panel,100,[{label,"ok"},{size,{200,25}}]),
 
-  Logo = wxImage:new("logo.jpg"),
+  Logo = wxImage:new("../logo.jpg"),
   Bitmap = wxBitmap:new(wxImage:scale(Logo,round(wxImage:getWidth(Logo)*1.5), round(wxImage:getHeight(Logo)*1.5),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
