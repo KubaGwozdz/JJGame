@@ -22,25 +22,36 @@ loop(State) ->
   receive
     #wx{event = #wxClose{}} -> wxWindow:destroy(Frame), ok;
     #wx{id = 1, event = #wxCommand{type = command_button_clicked}} ->
+      game:register_players(),
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns} = serverFrames:registeredPlayers(Frame,1),
-      loop({Frame2,Panel2});
+      registerLoop({Frame2,Panel2,Turns});
     #wx{id = 2, event = #wxCommand{type = command_button_clicked}} ->
+      game:register_players(),
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns} = serverFrames:registeredPlayers(Frame,5),
-      loop({Frame2,Panel2});
+      registerLoop({Frame2,Panel2,Turns});
     #wx{id = 3, event = #wxCommand{type = command_button_clicked}} ->
+      game:register_players(),
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns} = serverFrames:registeredPlayers(Frame,10),
-      loop({Frame2,Panel2});
+      registerLoop({Frame2,Panel2,Turns})
+  end.
+
+registerLoop(State) ->
+  {Frame,Panel,Turns} = State,
+  receive
     #wx{id = 4, event = #wxCommand{type = command_button_clicked}} ->
       wxPanel:destroy(Panel),
-      gameLoop(Frame,1);
+      gameLoop(Frame,Turns);
     #wx{id = 5, event = #wxCommand{type = command_button_clicked}} ->
       wxFrame:destroy(Frame)
+  after
+    3000 ->
+      wxPanel:destroy(Panel),
+      {Frame2,Panel2,Turns2} = serverFrames:registeredPlayers(Frame,Turns),
+      registerLoop({Frame2,Panel2,Turns2})
   end.
 
 gameLoop(Frame,Turns) ->
   Turns.
-  %%game:start(),
-

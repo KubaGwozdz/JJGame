@@ -17,7 +17,6 @@
 start() ->
   BoardServerPID = spawn(fun() -> boardServer:start_link() end),
   AnswersServerPID = spawn(fun() -> answersServer:start_link() end),
-  register_players(),
   ok.
 
 register_players() ->
