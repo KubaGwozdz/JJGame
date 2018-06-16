@@ -33,7 +33,7 @@ register(Players) ->    % broadcasts clients registration mode
 
 
 collect_answers(Rebus) ->
-  answersServer:add_rebus(Rebus),
+  %answersServer:add_rebus(Rebus),
   broadcast_clients(Rebus, boardServer:get_clients_pids(), give_answer).
 
 collect_choices(Rebus) ->

@@ -64,6 +64,7 @@ get_clients_points(PID) ->
 
 
 
+
 %% CALLBACKS
 
 handle_call({get_leaderboard}, _From, Leaderboard) -> {reply, Leaderboard, Leaderboard};
