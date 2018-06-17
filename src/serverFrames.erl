@@ -11,7 +11,7 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([initFrame/0,registeredPlayers/2,rebusAnswer/2,leaderBoard/1,rebusDisplay/2,correctAnswer/2]).
+-export([initFrame/0,registeredPlayers/2,rebusAnswer/2,leaderBoard/1,rebusDisplay/2,correctAnswer/2,replayBoard/1]).
 
 initFrame()->
   Parent = wx:new(),
@@ -173,12 +173,11 @@ correctAnswer(Frame,Turns) ->
   AnswerName = AnswerNumber ++ "answer.jpg",
   Answer = wxImage:new(AnswerName),
 
-
   Bitmap = wxBitmap:new(wxImage:scale(Answer,round(wxImage:getWidth(Answer))*1, round(wxImage:getHeight(Answer)*1),
     [{quality, ?wxIMAGE_QUALITY_HIGH}])),
   StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
 
-  wxSizer:addSpacer(Sizer,80),
+  wxSizer:addSpacer(Sizer,150),
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,0}]),
 
   wxPanel:setSizer(Panel,Sizer),
@@ -191,4 +190,70 @@ correctAnswer(Frame,Turns) ->
   {Frame,Panel}.
 
 leaderBoard(Frame) ->
-  ok.
+  Panel = wxPanel:new(Frame),
+  Sizer = wxBoxSizer:new(?wxVERTICAL),
+  BoardSizer = wxBoxSizer:new(?wxVERTICAL),
+  wxPanel:setBackgroundColour(Panel,?wxWHITE),
+
+  PlayersWithPoints = boardServer:get_client_point_list(),
+  ResultsText = [Player ++ "           "++Points || {Player,Points} <- PlayersWithPoints],
+  Results = [wxStaticText:new(Panel,0,Result,[{style,?wxALIGN_CENTER}]) || Result <- ResultsText],
+
+  Text = wxStaticText:new(Panel,0,"Leader board",[{style,?wxALIGN_CENTER}]),
+  Font = wxFont:new(28,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  wxStaticText:setFont(Text,Font),
+  Font2 = wxFont:new(14,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
+  [wxStaticText:setFont(Result,Font2) || Result <- Results],
+
+  wxSizer:addSpacer(Sizer,30),
+  wxSizer:add(Sizer,Text,[{flag,?wxALIGN_CENTER},{proportion,1}]),
+  wxSizer:addSpacer(Sizer,50),
+  [wxSizer:add(BoardSizer,Result,[{flag,?wxALIGN_CENTER},{proportion,1}]) || Result <- Results],
+  wxSizer:add(Sizer,BoardSizer),
+
+  wxPanel:setSizer(Panel,Sizer),
+  wxSizer:fit(Sizer,Panel),
+  wxPanel:fit(Panel),
+  wxFrame:connect(Frame, close_window),
+  wxFrame:fit(Frame),
+  wxFrame:showFullScreen(Frame,true),
+  wxFrame:show(Frame),
+  {Frame,Panel}.
+
+replayBoard(Frame) ->
+  Panel = wxPanel:new(Frame),
+  Sizer = wxBoxSizer:new(?wxVERTICAL),
+  BoardSizer = wxBoxSizer:new(?wxVERTICAL),
+  ButtonSizer = wxBoxSizer:new(?wxHORIZONTAL),
+  wxPanel:setBackgroundColour(Panel,?wxWHITE),
+
+  PlayersWithPoints = boardServer:get_client_point_list(),
+  ResultsText = [Player ++ "           "++Points || {Player,Points} <- PlayersWithPoints],
+  Results = [wxStaticText:new(Panel,0,Result,[{style,?wxALIGN_CENTER}]) || Result <- ResultsText],
+
+  ButtonExit = wxButton:new(Panel,90,[{label,"EXIT"},{size,{150,30}}]),
+  Text = wxStaticText:new(Panel,0,"Leader board",[{style,?wxALIGN_CENTER}]),
+  Font = wxFont:new(28,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  wxStaticText:setFont(Text,Font),
+  Font2 = wxFont:new(14,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
+  [wxStaticText:setFont(Result,Font2) || Result <- Results],
+
+  wxSizer:addSpacer(Sizer,30),
+  wxSizer:add(Sizer,Text,[{flag,?wxALIGN_CENTER},{proportion,0}]),
+  wxSizer:addSpacer(Sizer,50),
+  wxSizer:add(ButtonSizer,ButtonExit,[{flag,?wxALIGN_CENTER bor ?wxALL},{proportion,0},{border,20}]),
+  wxSizer:addSpacer(ButtonSizer,20),
+  [wxSizer:add(BoardSizer,Result,[{flag,?wxALIGN_CENTER},{proportion,1}]) || Result <- Results],
+
+  wxSizer:add(Sizer,ButtonSizer,[{flag,?wxALIGN_CENTER}]),
+  wxSizer:add(Sizer,BoardSizer,[{flag,?wxALIGN_CENTER}]),
+  wxPanel:setSizer(Panel,Sizer),
+  wxSizer:fit(Sizer,Panel),
+  wxPanel:fit(Panel),
+  wxFrame:connect(Frame, close_window),
+  wxPanel:connect(Panel, command_button_clicked),
+  wxFrame:fit(Frame),
+  wxFrame:showFullScreen(Frame,true),
+  wxFrame:show(Frame),
+  Frame.
+
