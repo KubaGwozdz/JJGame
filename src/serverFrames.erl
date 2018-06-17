@@ -11,7 +11,7 @@
 -include_lib("wx/include/wx.hrl").
 
 %% API
--export([initFrame/0,registeredPlayers/2,rebusAnswer/2,leaderBoard/1,rebusDisplay/2]).
+-export([initFrame/0,registeredPlayers/2,rebusAnswer/2,leaderBoard/1,rebusDisplay/2,correctAnswer/2]).
 
 initFrame()->
   Parent = wx:new(),
@@ -164,6 +164,31 @@ rebusAnswer(Frame,Turns) ->
   wxFrame:showFullScreen(Frame,true),
   wxFrame:show(Frame),
   {Frame,Panel,Turns,Time}.
+
+correctAnswer(Frame,Turns) ->
+  Panel = wxPanel:new(Frame),
+  Sizer = wxBoxSizer:new(?wxVERTICAL),
+  wxPanel:setBackgroundColour(Panel,?wxWHITE),
+  AnswerNumber = integer_to_list(Turns),
+  AnswerName = AnswerNumber ++ "answer.jpg",
+  Answer = wxImage:new(AnswerName),
+
+
+  Bitmap = wxBitmap:new(wxImage:scale(Answer,round(wxImage:getWidth(Answer))*1, round(wxImage:getHeight(Answer)*1),
+    [{quality, ?wxIMAGE_QUALITY_HIGH}])),
+  StaticBitmap = wxStaticBitmap:new(Panel,4,Bitmap),
+
+  wxSizer:addSpacer(Sizer,80),
+  wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,0}]),
+
+  wxPanel:setSizer(Panel,Sizer),
+  wxSizer:fit(Sizer,Panel),
+  wxPanel:fit(Panel),
+  wxFrame:connect(Frame, close_window),
+  wxFrame:fit(Frame),
+  wxFrame:showFullScreen(Frame,true),
+  wxFrame:show(Frame),
+  {Frame,Panel}.
 
 leaderBoard(Frame) ->
   ok.

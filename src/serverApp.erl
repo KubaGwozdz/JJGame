@@ -45,6 +45,7 @@ registerLoop(State) ->
       game:collect_answers(Turns),
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns2,Time} = serverFrames:rebusDisplay(Frame,Turns),
+      game:collect_answers(Turns),
       rebusDisplayLoop(Frame,Panel2,Turns,40,Time);
     #wx{id = 5, event = #wxCommand{type = command_button_clicked}} ->
       wxFrame:destroy(Frame),
@@ -64,6 +65,7 @@ rebusDisplayLoop(Frame,Panel,Turns,Counter,Time) ->
       if
         Counter == 0 ->
           wxPanel:destroy(Panel),
+          game:collect_choices(Turns),
           {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusAnswer(Frame,Turns),
           rebusAnswerLoop(Frame2,Panel2,Turns,30,Time2);
         true ->
@@ -75,26 +77,33 @@ rebusDisplayLoop(Frame,Panel,Turns,Counter,Time) ->
   end.
 
 rebusAnswerLoop(Frame,Panel,Turns,Counter,Time) ->
-  if
-    Turns == 0 ->
-      wxPanel:destroy(Panel),
-      serverFrames:leaderBoard(Frame);
-    true ->
-      receive
-        #wx{event = #wxClose{}} -> wxWindow:destroy(Frame), ok
-      after
-        1000 ->
+  receive
+    #wx{event = #wxClose{}} -> wxWindow:destroy(Frame), ok
+  after
+    1000 ->
+      if
+        Counter == 0 ->
+          NextTurn = Turns - 1,
+          wxPanel:destroy(Panel),
           if
-            Counter == 0 ->
-              NextTurn = Turns - 1,
-              wxPanel:destroy(Panel),
-              {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusDisplay(Frame,NextTurn),
-              rebusDisplayLoop(Frame,Panel2,NextTurn,40,Time2);
+            NextTurn == 0 ->
+              serverFrames:leaderBoard(Frame);
             true ->
+              if
+                Turns /= 1 ->
+                  {Frame3,Panel3} = serverFrames:correctAnswer(Frame,Turns),
+                  timer:sleep(5000),
+                  wxPanel:destroy(Panel3);
+                true -> ok
+              end,
+              game:collect_answers(NextTurn),
+              {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusDisplay(Frame,NextTurn),
+              rebusDisplayLoop(Frame,Panel2,NextTurn,40,Time2)
+          end;
+        true ->
               NewCounter = Counter - 1,
               Seconds = integer_to_list(NewCounter),
               wxStaticText:setLabel(Time,Seconds),
               rebusAnswerLoop(Frame,Panel,Turns,NewCounter,Time)
-          end
       end
   end.
