@@ -15,7 +15,7 @@
 -export([start_link/0, init/1]).
 -export([handle_call/3, handle_cast/3]).
 -export([get_leaderboard/0, get_number_of_players/0, get_clients/0, get_clients_points/1, get_clients_pids/0,
-  add_client/1, register_client/2, delete_client/1, add_client_point/1, get_clients_names/0]).
+  add_client/1, register_client/2, delete_client/1, add_client_point/1, get_clients_names/0, get_client_point_list/0]).
 -export([create_leaderboard/0]).
 
 -record(leaderBoard, {board}). % key: PID val: player
@@ -62,6 +62,9 @@ add_client_point(PID) ->
 get_clients_points(PID) ->
   gen_server:call({global, boardServer}, {get_clients_points, PID}).
 
+get_client_point_list() ->
+  gen_server:call({global, boardServer}, {get_client_point_list}).
+
 
 
 
@@ -100,6 +103,12 @@ handle_call({get_clients_points, PID}, _From, Leaderboard) ->
     {reply, Points, Leaderboard};
     true -> {reply, playerDoesNotExist, Leaderboard}
   end;
+
+handle_call({get_client_point_list}, _From, Leaderboard) ->
+  L1 = Leaderboard#leaderBoard.board,
+  Players = maps:values(L1),
+  PlyrPntLst = lists:map(fun(#player{name = N, points = P}) -> {N,P} end, Players),
+  {reply, PlyrPntLst, Leaderboard};
 
 handle_call({register_client, PID, Name}, _From, Leaderboard) ->
   L1 = Leaderboard#leaderBoard.board,
