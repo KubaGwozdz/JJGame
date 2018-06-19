@@ -226,14 +226,14 @@ replayBoard(Frame) ->
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
   PlayersWithPoints = boardServer:get_client_point_list(),
-  ResultsText = [Player ++ "           "++Points || {Player,Points} <- PlayersWithPoints],
+  ResultsText = [Player ++ "           "++(integer_to_list(Points)) || {Player,Points} <- PlayersWithPoints],
   Results = [wxStaticText:new(Panel,0,Result,[{style,?wxALIGN_CENTER}]) || Result <- ResultsText],
 
   ButtonExit = wxButton:new(Panel,90,[{label,"EXIT"},{size,{150,30}}]),
   Text = wxStaticText:new(Panel,0,"Leader board",[{style,?wxALIGN_CENTER}]),
-  Font = wxFont:new(28,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
+  Font = wxFont:new(32,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
   wxStaticText:setFont(Text,Font),
-  Font2 = wxFont:new(14,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
+  Font2 = wxFont:new(24,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
   [wxStaticText:setFont(Result,Font2) || Result <- Results],
 
   wxSizer:addSpacer(Sizer,30),
