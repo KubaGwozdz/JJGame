@@ -274,10 +274,10 @@ your_points_refresh({Frame, Panel}, Rebus,  Name, Points, Sizer) ->
       io:format("~p Closing window ~n",[self()]),
       wxWindow:destroy(Frame),
       ok;
-    {choose, Reb} ->
-      clientFrames:show_choose_answer_frame({Frame, Panel},Reb, Name)
+    {give_answer, Reb} ->
+      clientFrames:show_give_answer_frame({Frame, Panel}, Reb, Name)
     after
-      10000 -> wxStaticText:setLabel(Points, [integer_to_list(boardServer:get_clients_points(self()))]) %show_your_points_frame({Frame, Panel}, Rebus, Name)
+      1000 -> wxStaticText:setLabel(Points, [integer_to_list(boardServer:get_clients_points(self()))]) %show_your_points_frame({Frame, Panel}, Rebus, Name)
   end.
 
 
