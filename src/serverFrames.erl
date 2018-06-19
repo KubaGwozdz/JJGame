@@ -192,7 +192,6 @@ correctAnswer(Frame,Turns) ->
 leaderBoard(Frame) ->
   Panel = wxPanel:new(Frame),
   Sizer = wxBoxSizer:new(?wxVERTICAL),
-  BoardSizer = wxBoxSizer:new(?wxVERTICAL),
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
   PlayersWithPoints = boardServer:get_client_point_list(),
@@ -202,14 +201,13 @@ leaderBoard(Frame) ->
   Text = wxStaticText:new(Panel,0,"Leader board",[{style,?wxALIGN_CENTER}]),
   Font = wxFont:new(28,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_BOLD),
   wxStaticText:setFont(Text,Font),
-  Font2 = wxFont:new(14,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
+  Font2 = wxFont:new(18,?wxFONTFAMILY_MODERN,?wxFONTSTYLE_NORMAL,?wxFONTWEIGHT_LIGHT),
   [wxStaticText:setFont(Result,Font2) || Result <- Results],
 
   wxSizer:addSpacer(Sizer,30),
   wxSizer:add(Sizer,Text,[{flag,?wxALIGN_CENTER},{proportion,1}]),
   wxSizer:addSpacer(Sizer,50),
-  [wxSizer:add(BoardSizer,Result,[{flag,?wxALIGN_CENTER},{proportion,1}]) || Result <- Results],
-  wxSizer:add(Sizer,BoardSizer),
+  [wxSizer:add(Sizer,Result,[{flag,?wxALIGN_CENTER},{proportion,1}]) || Result <- Results],
 
   wxPanel:setSizer(Panel,Sizer),
   wxSizer:fit(Sizer,Panel),
