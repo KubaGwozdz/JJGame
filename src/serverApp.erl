@@ -10,7 +10,7 @@
 -author("kuba").
 -include_lib("wx/include/wx.hrl").
 %% API
--export([loop/1,start/0,rebusDisplayLoop/5,rebusAnswerLoop/5]).
+-export([loop/1,start/0,rebusDisplayLoop/5,rebusAnswerLoop/5,replayLoop/1]).
 
 start() ->
   spawn(fun() -> game:start() end),
@@ -46,7 +46,7 @@ registerLoop(State) ->
       wxPanel:destroy(Panel),
       {Frame2,Panel2,Turns2,Time} = serverFrames:rebusDisplay(Frame,Turns),
       game:collect_answers(Turns),
-      rebusDisplayLoop(Frame,Panel2,Turns,40,Time);
+      rebusDisplayLoop(Frame,Panel2,Turns,2,Time);
     #wx{id = 5, event = #wxCommand{type = command_button_clicked}} ->
       wxFrame:destroy(Frame),
       ok
@@ -67,7 +67,7 @@ rebusDisplayLoop(Frame,Panel,Turns,Counter,Time) ->
           wxPanel:destroy(Panel),
           game:collect_choices(Turns),
           {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusAnswer(Frame,Turns),
-          rebusAnswerLoop(Frame2,Panel2,Turns,30,Time2);
+          rebusAnswerLoop(Frame2,Panel2,Turns,2,Time2);
         true ->
           NewCounter = Counter - 1,
           Seconds = integer_to_list(NewCounter),
@@ -87,7 +87,7 @@ rebusAnswerLoop(Frame,Panel,Turns,Counter,Time) ->
           wxPanel:destroy(Panel),
           if
             NextTurn == 0 ->
-              serverFrames:leaderBoard(Frame);
+              replayLoop(Frame);
             true ->
               if
                 Turns /= 1 ->
@@ -96,9 +96,12 @@ rebusAnswerLoop(Frame,Panel,Turns,Counter,Time) ->
                   wxPanel:destroy(Panel3);
                 true -> ok
               end,
+              {Frame4,Panel4} = serverFrames:leaderBoard(Frame),
+              timer:sleep(7000),
+              wxPanel:destroy(Panel4),
               game:collect_answers(NextTurn),
               {Frame2,Panel2,Turns2,Time2} = serverFrames:rebusDisplay(Frame,NextTurn),
-              rebusDisplayLoop(Frame,Panel2,NextTurn,40,Time2)
+              rebusDisplayLoop(Frame,Panel2,NextTurn,2,Time2)
           end;
         true ->
               NewCounter = Counter - 1,
@@ -106,4 +109,12 @@ rebusAnswerLoop(Frame,Panel,Turns,Counter,Time) ->
               wxStaticText:setLabel(Time,Seconds),
               rebusAnswerLoop(Frame,Panel,Turns,NewCounter,Time)
       end
+  end.
+
+replayLoop(Frame) ->
+  Frame2 = serverFrames:replayBoard(Frame),
+  receive
+    #wx{id = 90, event = #wxCommand{type = command_button_clicked}} ->
+      wxFrame:destroy(Frame);
+    #wx{event = #wxClose{}} -> wxWindow:destroy(Frame), ok
   end.
