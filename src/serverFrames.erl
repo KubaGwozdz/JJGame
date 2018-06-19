@@ -196,7 +196,7 @@ leaderBoard(Frame) ->
   wxPanel:setBackgroundColour(Panel,?wxWHITE),
 
   PlayersWithPoints = boardServer:get_client_point_list(),
-  ResultsText = [Player ++ "           "++Points || {Player,Points} <- PlayersWithPoints],
+  ResultsText = [Player ++ "           "++(integer_to_list(Points)) || {Player,Points} <- PlayersWithPoints],
   Results = [wxStaticText:new(Panel,0,Result,[{style,?wxALIGN_CENTER}]) || Result <- ResultsText],
 
   Text = wxStaticText:new(Panel,0,"Leader board",[{style,?wxALIGN_CENTER}]),
