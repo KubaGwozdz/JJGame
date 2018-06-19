@@ -277,7 +277,8 @@ your_points_refresh({Frame, Panel}, Rebus,  Name, Points, Sizer) ->
     {give_answer, Reb} ->
       clientFrames:show_give_answer_frame({Frame, Panel}, Reb, Name)
     after
-      1000 -> wxStaticText:setLabel(Points, [integer_to_list(boardServer:get_clients_points(self()))]) %show_your_points_frame({Frame, Panel}, Rebus, Name)
-  end.
+      1000 -> wxStaticText:setLabel(Points, [integer_to_list(boardServer:get_clients_points(self()))]), %show_your_points_frame({Frame, Panel}, Rebus, Name)
+    your_points_refresh({Frame, Panel}, Rebus,  Name, Points, Sizer)
+end.
 
 
