@@ -243,7 +243,8 @@ show_your_points_frame({Frame, P},Rebus, Name) ->
   wxStaticText:setFont(NameT,Font),
   wxStaticText:setFont(Text,Font2),
 
-  Points = wxStaticText:new(Panel,11,[integer_to_list(boardServer:get_clients_points(self()))],[{style,?wxALIGN_CENTER},{size,{70,70}}]),
+  Points = wxStaticText:new(Panel,11,[integer_to_list(boardServer:get_clients_points(self()))],
+    [{style,?wxALIGN_CENTER},{size,{70,70}}]),
   wxStaticText:setFont(Points,Font1),
 
 
@@ -254,7 +255,7 @@ show_your_points_frame({Frame, P},Rebus, Name) ->
   wxSizer:add(Sizer,StaticBitmap,[{flag,?wxALIGN_CENTER},{proportion,1}]),
 
   %wxSizer:addSpacer(Sizer, 20),
-  wxSizer:add(Sizer,Points,[{flag,?wxALIGN_CENTER bor ?wxEXPAND},{proportion,1}]),
+  wxSizer:add(Sizer,Points,[{flag,?wxALIGN_CENTER},{proportion,1}]),
   wxSizer:addSpacer(Sizer, 120),
 
 
